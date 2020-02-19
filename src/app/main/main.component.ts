@@ -11,7 +11,8 @@ import { AuthService } from '../core/services/auth.service';
 export class MainComponent {
 
   navItems: NavItem[] = [
-    { name: 'examples.$TITLE', route: ['/examples'] }
+    { name: 'examples.$TITLE', route: ['/examples'] },
+    {name:'Products',route:['/products']}
   ];
 
   constructor(private _authService: AuthService) { }

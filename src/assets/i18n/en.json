@@ -1,6 +1,6 @@
 {
   "app": {
-    "NAME": "SS Template",
+    "NAME": "GiftShop",
     "OK": "OK",
     "CANCEL": "Cancel",
     "CLOSE": "Close",
@@ -88,5 +88,15 @@
     "EDIT": "Edit Example",
     "DELETE": "Delete Example",
     "CONFIRM_DELETE": "Are you sure you want to delete the example {{name}}?"
+  },
+  "products":{
+    "$TITLE": "Products",
+    "NAME": "Name",
+    "DESC": "Description",
+    "IMGSOURCE":"Image",
+    "ADD": "Add Product",
+    "EDIT": "Edit Product",
+    "DELETE": "Delete Product",
+    "CONFIRM_DELETE": "Are you sure you want to delete the Product {{name}}?"
   }
 }

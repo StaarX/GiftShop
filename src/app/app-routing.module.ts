@@ -21,6 +21,14 @@ const routes: Routes = [
     },
     children: [
       {
+        path: 'products',
+        component: LayoutComponent,
+        loadChildren: './components/products/products.module#ProductsModule',
+        data: {
+          title: 'Products'
+        }
+      },
+      {
         path: 'examples',
         component: LayoutComponent,
         loadChildren: './examples/examples.module#ExamplesModule',

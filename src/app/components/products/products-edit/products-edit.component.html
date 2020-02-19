@@ -1,0 +1,217 @@
+<div class="py-md-3 align-content-center">
+  <app-panel [loading]="loading">
+    <h2 class="text-lg-center" *ngIf="this.addMode">Add a new Product</h2>
+    <h2 class="text-lg-center" *ngIf="this.editMode">Edit a existing Product</h2>
+    <br/>
+   
+    <form class=""(ngSubmit)="doSubmit()" [formGroup]="form" autocomplete="off">
+      <div class="row">
+        <div class="col-md">
+          <div class="row form-group">
+            <label for="name" class="col-md-4 col-form-label required text-lg-right">{{
+              'products.NAME' | translate
+            }}</label>
+
+            <div class="col-md-6">
+              <input
+                class="form-control"
+                id="name"
+                type="text"
+                formControlName="name"
+              />
+              <span
+                class="messages"
+                *ngIf="submitted &amp;&amp; form.controls.name.invalid"
+              >
+                <p
+                  *ngIf="form.controls.name.errors.required"
+                  class="text-danger error"
+                >
+                  {{ 'validations.REQUIRED' | translate }}
+                </p>
+                <p
+                  *ngIf="form.controls.name.errors.maxlength"
+                  class="text-danger error"
+                >
+                  {{
+                    'validations.MAX_LENGTH'
+                      | translate
+                        : {
+                            requiredLength:
+                              form.controls.name.errors.maxlength
+                                .requiredLength,
+                            actualLength:
+                              form.controls.name.errors.maxlength.actualLength
+                          }
+                  }}
+                </p>
+              </span>
+            </div>
+          </div>
+
+          <div class="row form-group">
+            <label for="description" class="col-md-4 col-form-label required text-lg-right">{{
+              'products.DESC' | translate
+            }}</label>
+
+            <div class="col-md-6">
+              <input
+                class="form-control"
+                id="description"
+                type="text"
+                formControlName="description"
+              />
+              <span
+                class="messages"
+                *ngIf="submitted &amp;&amp; form.controls.name.invalid"
+              >
+                <p
+                  *ngIf="form.controls.name.errors.required"
+                  class="text-danger error"
+                >
+                  {{ 'validations.REQUIRED' | translate }}
+                </p>
+                <p
+                  *ngIf="form.controls.name.errors.maxlength"
+                  class="text-danger error"
+                >
+                  {{
+                    'validations.MAX_LENGTH'
+                      | translate
+                        : {
+                            requiredLength:
+                              form.controls.name.errors.maxlength
+                                .requiredLength,
+                            actualLength:
+                              form.controls.name.errors.maxlength.actualLength
+                          }
+                  }}
+                </p>
+              </span>
+            </div>
+          </div>
+
+          <div class="row form-group" style="margin-bottom:170px">
+            <label for="imgSource" class="col-md-4 col-form-label required text-lg-right">{{
+              'products.IMGSOURCE' | translate
+            }}</label>
+
+            <div class="col-md-6">
+             
+              <div class="custom-file">
+                <input
+                  class="custom-file-input"
+                  id="imgSourceInput"
+                  type="file"
+                  accept="image/jpeg"
+                  (change)="convertImage($event)"
+                />
+                <label class="custom-file-label" for="imgSrc">Choose an image (JPG Only)</label>
+
+                <div class="card-img center square">
+                  <img [src]="imageUrl" class="img-thumbnail"> 
+                </div>
+                <input
+                  type="hidden"
+                  class="form-control"
+                  id="imgSource"
+                  formControlName="imgSource"
+                  name="ImageBase64"
+                />
+              </div>
+
+
+              <span
+                class="messages"
+                *ngIf="submitted &amp;&amp; form.controls.imgSource.invalid"
+              >
+                <p
+                  *ngIf="form.controls.imgSource.errors.required"
+                  class="text-danger error"
+                >
+                  {{ 'validations.REQUIRED' | translate }}
+                </p>
+                <p
+                  *ngIf="form.controls.imgSource.errors.maxlength"
+                  class="text-danger error"
+                >
+                  {{
+                    'validations.MAX_LENGTH'
+                      | translate
+                        : {
+                            requiredLength:
+                              form.controls.imgSource.errors.maxlength
+                                .requiredLength,
+                            actualLength:
+                              form.controls.imgSource.errors.maxlength.actualLength
+                          }
+                  }}
+                </p>
+              </span>
+            </div>
+          </div>
+           
+          <div class="row form-group">
+            <label for="categoriesSelect" class="col-md-4 col-form-label required text-lg-right">Categories</label>
+            <div class="col-md-6">
+              <select [ngModelOptions]="{standalone: true}" [(ngModel)]="selectedCategory" class="form-control" id="categoriesSelect" >
+                  <option *ngFor="let item of categories?.items" [ngValue]="item">{{item.name}}</option>
+              </select>
+          </div>
+          <div class="col">
+            <button type="button" (click)="addList()" class="btn btn-success">+</button>
+          </div>
+        </div>
+          
+
+        </div>
+      </div>
+
+
+      <div class="row form-group">
+        <div class="col-md">
+
+
+      <div class="row form-group">
+
+        
+        <div class="col-md-10 form-group form-inline card border-0">
+          Search for Categories: <input class="form-control ml-2" type="text" [formControl]="filter"/>
+      </div>
+
+        <div class="col-md-2 text-right form-actions">
+          <button type="submit" class="btn btn-primary">
+            {{ 'app.SAVE' | translate }}
+          </button>
+          <a [routerLink]="['/products']" class="btn btn-danger">{{
+            'app.CANCEL' | translate
+          }}</a>
+        </div>
+      </div>
+
+          <table class="table table-striped">
+            <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Name</th>
+              <th scope="col">Desc</th>
+              <th scope="col">Delete</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let category of product?.categories; index as i">
+              <th scope="row">{{ i + 1 }}</th>
+              <td>
+                <ngb-highlight [result]="category.name" [term]="filter.value"></ngb-highlight>
+              </td>
+              <td><ngb-highlight [result]="category.description" [term]="filter.value"></ngb-highlight></td>
+              <td><button type="button" (click)="deleteCategory(category.id)" class="btn btn-danger">Delete</button></td>
+            </tr>
+            </tbody>
+          </table>
+      </div>
+    </div>
+    </form>
+ 
+  </app-panel>
+</div>
