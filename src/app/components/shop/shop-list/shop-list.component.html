@@ -1,0 +1,110 @@
+<div class="py-md-3">
+  <h2 class="text-center">Gift Shop</h2> 
+
+</div>
+<app-panel [loading]="loading">
+
+ <!-- Modal start -->
+  <ng-template #content let-modal>
+    <!-- Modal header -->
+    <div class="modal-header">
+        <h4 class="modal-title text-center" id="modal-basic-title">Add to Cart</h4>
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <!-- Modal body -->
+    <div class="modal-body">
+        <div class="text-center"><h5>{{modalInfo.name}}</h5>
+        </div>
+        <hr>
+        <div class="mb-2 fixImage">
+          <img class="img-thumbnail" [src]="modalInfo.imgSource"/>
+        </div>
+        <hr>
+        <div id="infoContainer">
+          <div class="row">
+            <h6 class="col-3">
+              Description: 
+            </h6>
+            <div class="col-9 text-left">{{modalInfo.description}}</div>
+          </div>
+
+          <div class="row">
+            <h6 class="col-3">
+              Type: 
+            </h6>
+            <div class="col-9 text-left">{{selectedType?.type || 'There is not a type selected'}}</div>
+          </div>
+
+          <div class="row">
+            <h6 class="col-3">
+              Price: 
+            </h6>
+            <div class="col-9 text-left">{{selectedType?.price || 'There is not a type selected'}}</div>
+          </div>
+          <hr>
+        </div>
+        <div *ngIf="hasProductDetails(); else elseBlock">
+          <label class="text-danger">There are not available options for the product desired</label>
+        </div> 
+        <ng-template #elseBlock>
+          <div>
+            <select [ngModelOptions]="{standalone: true}" [(ngModel)]="selectedType" class="form-control" id="categoriesSelect" (change)="typeChanged()">
+              <option [ngValue]="undefined" selected disabled>Please select a Type</option>
+              <option *ngFor="let item of modalInfo?.productDetails" [ngValue]="item">{{item.type}}</option>
+          </select>
+          </div>
+          <br>
+              <div class="card"> 
+
+              <div *ngIf="hasTypeValue()">
+                <div class="btn-xs btn-fluid btn-success text-center mt-2 mb-3" disabled>
+                  Available
+                </div>
+              </div>
+
+                <div *ngIf="hasntTypeValue()">
+                  <div class="btn-xs btn-fluid btn-danger text-center mt-2 mb-3" disabled>
+                    There are no items available
+                  </div>  
+                </div>
+
+                <select [ngModelOptions]="{standalone: true}" [(ngModel)]="selectedQty" class="form-control" id="categoriesSelect" (change)="qtyChanged()">
+                  <option [ngValue]="undefined" [selected]='selected' disabled>Select an amount</option>
+                  <option *ngFor="let item of availabilityToArray(); let i = index" [ngValue]="i+1">{{i+1}}</option>
+              </select>
+              </div>
+        </ng-template>
+    </div>
+    <!-- Modal Footer -->
+    <div class="modal-footer">
+      <button type="button" class="btn btn-danger" (click)="modal.dismiss('Close button')">Close</button>
+      <button type="button" class="btn btn-success" (click)="modal.close()">Save</button>
+    </div>
+    
+  </ng-template>
+  <!-- Modal end -->
+  
+
+  <div class="row">
+    <div class="col-md-4" *ngFor="let item of page?.items">
+        <div class="card bg-light p-1 m-1">
+            <div class="fixImage">
+              <img [src]="item.imgSource" class="img-fluid img-thumbnail"  [alt]="item.name"/>
+            </div>
+            <ul>
+                <li><strong>Name:</strong> {{ item.name}}</li>
+                <li><strong>Description:</strong> {{ item.description }}</li>
+            </ul>
+            <div class="btn-group" role="group" aria-label="Basic example">
+              <button class="btn btn-success" id="buyButton" (click)="checkout()">Buy</button>
+              <button class="btn btn-primary" id="addCart" (click)="openModal(content,item.id)"><i class="fas fa-cart-plus"></i> Add to Cart</button>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 center">
+    <app-pagination [page]="page" (pageChange)="getPage($event)"></app-pagination>
+    </div>
+</div>
+</app-panel>

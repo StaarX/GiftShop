@@ -1,4 +1,5 @@
 import { Category } from './category-model';
+import { ProductDetail } from './productDetail-model';
 
 export interface Product {
     id: string;
@@ -7,4 +8,5 @@ export interface Product {
     imgSource:string;
     status: number;
     categories: Category[];
+    productDetails:ProductDetail[];
   }

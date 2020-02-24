@@ -1,7 +1,9 @@
 <div class="py-md-3">
-  <a class="btn btn-success btn-lg" [routerLink]="['./new']">
-    {{ 'app.NEW' | translate }}
-  </a>
+  
+    <a class="btn btn-success btn-lg mb-4 mb-md-0 btn-block" [routerLink]="['./new']">
+      {{ 'app.NEW' | translate }}
+    </a>
+  
 </div>
 <app-panel [loading]="loading">
   <div class="table-responsive">
@@ -10,7 +12,7 @@
         <tr>
           <th appTablesortCol="name">{{ 'products.NAME' | translate }}</th>
           <th appTablesortCol="description">{{ 'products.DESC' | translate }}</th>
-          <th></th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -18,7 +20,8 @@
 
 
           <td>
-            <label ngbPopover="{{item.imgSource}}" triggers="mouseenter:mouseleave" popoverTitle="{{item.name}}">
+            <ng-template #popContent><img class="img-fluid img-thumbnail" [src]="item.imgSource"/></ng-template>
+            <label [ngbPopover]="popContent" triggers="mouseenter:mouseleave" popoverTitle="{{item.name}}">
               {{item.name}}
             </label>
           </td>

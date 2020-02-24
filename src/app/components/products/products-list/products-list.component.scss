@@ -1,12 +1,6 @@
-
-  body {
-    padding-top: 60px;
-  }
-  
-  @media (max-width: 979px) {
-  
-    /* Remove any padding from the body */
-    body {
-      padding-top: 0;
-    }
+img {
+  max-width:100%;
+  min-width:225px;
+  max-height:225px;
+  min-height:100%;
   }

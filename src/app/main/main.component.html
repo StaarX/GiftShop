@@ -1,13 +1,64 @@
-<nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-  <a class="navbar-brand col-sm-3 col-md-2 mr-0" [routerLink]="['/']">{{ 'app.NAME' | translate }}</a>
-  <app-title class="navbar-text"></app-title>
+<nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow navbar-expand">
+  <a class="navbar-brand col-sm-3 col-md-2 mr-0 text-center" [routerLink]="['/']">{{ 'app.NAME' | translate }}</a>
+
+    <app-title class="navbar-text ml-auto"></app-title>
+    
   <!-- <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search"> -->
-  <ul class="navbar-nav px-3">
-    <li class="nav-item text-nowrap">
+  <ul class="navbar-nav px-3 ml-auto">
+
+    <li class="nav-item" style="padding-right: 10px;" display="dynamic" ngbDropdown (openChange)="loadCart()"  #myDrop="ngbDropdown">
+
+      <a class="nav-link" style="cursor: pointer" ngbDropdownToggle id="navbarDropdown1" role="button">
+        <i class="fas fa-shopping-cart"></i>
+        Cart
+      </a>
+
+      <div ngbDropdownMenu class="dropdown-menu overflow-auto">
+        <div class="divform">
+        <h4 class="text-center">Cart</h4>
+        <hr>
+        <div class="container">
+        <div *ngFor="let item of cartItems">
+          <div class="row">
+          <div class="col-3 card">
+            <img [src]="item.imgSource">
+            </div> 
+           <div class="col-7 card">
+            <div>Name: {{item.name}} </div>
+            <div>Type: {{item.productDetail.type}}</div>
+            <div>Quantity: {{item.qty}} each {{item.productDetail.price}}</div>
+            <div>Total: {{item.qty*item.productDetail.price | number:'1.2-2'}}</div>
+            </div>
+            <button class="btn col-2 text-center btn-danger" (click)="deleteItemFromCart(item)">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+          <hr>
+        </div>
+        <div class="row">
+          <div class="col-6 text-center"><strong>Total:</strong></div>
+          <div class="col-6 text-center">{{calculateTotal() | number:'1.2-2'}}</div>
+        </div>
+        <hr>
+        <div class="row card">
+      <div class="btn-group" role="group">
+        <button class="btn btn-warning" (click)="$event.stopPropagation(); myDrop.close();">Close cart</button>
+        <button class="btn btn-success">Check out</button>
+      </div>
+    </div>
+      </div>
+      </div>
+
+   </div>
+    </li>
+
+
+    <li class="nav-item">
       <button class="btn btn-link nav-link" (click)="logOut()">
         <i class="fas fa-sign-out-alt"></i>
         {{ 'app.LOG_OUT' | translate }}</button>
     </li>
+    
   </ul>
 </nav>
 

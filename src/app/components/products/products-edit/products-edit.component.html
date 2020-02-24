@@ -1,8 +1,8 @@
 <div class="py-md-3 align-content-center">
   <app-panel [loading]="loading">
-    <h2 class="text-lg-center" *ngIf="this.addMode">Add a new Product</h2>
-    <h2 class="text-lg-center" *ngIf="this.editMode">Edit a existing Product</h2>
-    <br/>
+    <h2 class="text-center" *ngIf="this.addMode">Add a new Product</h2>
+    <h2 class="text-center" *ngIf="this.editMode">Edit a existing Product</h2>
+    <br/>   
    
     <form class=""(ngSubmit)="doSubmit()" [formGroup]="form" autocomplete="off">
       <div class="row">
@@ -154,8 +154,9 @@
           <div class="row form-group">
             <label for="categoriesSelect" class="col-md-4 col-form-label required text-lg-right">Categories</label>
             <div class="col-md-6">
-              <select [ngModelOptions]="{standalone: true}" [(ngModel)]="selectedCategory" class="form-control" id="categoriesSelect" >
-                  <option *ngFor="let item of categories?.items" [ngValue]="item">{{item.name}}</option>
+              <select [ngModelOptions]="{standalone: true}" [(ngModel)]="selectedCategory" class="form-control" id="categoriesSelect">
+                <option [ngValue]="undefined" selected disabled>Please select an Category</option>
+                  <option *ngFor="let item of categories?.items" [ngValue]="item" [selected]="item.type == 'back'">{{item.name}}</option>
               </select>
           </div>
           <div class="col">

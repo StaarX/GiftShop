@@ -28,13 +28,23 @@ const routes: Routes = [
           title: 'Products'
         }
       },
+
+      {
+        path: 'shop',
+        component: LayoutComponent,
+        loadChildren: './components/shop/shop.module#ShopModule',
+        data: {
+          title: 'Shop'
+        }
+      },
+
       {
         path: 'examples',
         component: LayoutComponent,
         loadChildren: './examples/examples.module#ExamplesModule',
         data: {
           title: 'examples.$TITLE'
-        }
+        },
       },
     ]
   },
