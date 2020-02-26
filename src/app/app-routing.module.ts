@@ -15,7 +15,6 @@ const routes: Routes = [
   {
     path: '',
     component: MainComponent,
-    canActivate: [AuthGuard],
     data: {
       title: 'app.HOME'
     },
@@ -23,6 +22,7 @@ const routes: Routes = [
       {
         path: 'products',
         component: LayoutComponent,
+        canActivate: [AuthGuard],
         loadChildren: './components/products/products.module#ProductsModule',
         data: {
           title: 'Products'
@@ -36,15 +36,6 @@ const routes: Routes = [
         data: {
           title: 'Shop'
         }
-      },
-
-      {
-        path: 'examples',
-        component: LayoutComponent,
-        loadChildren: './examples/examples.module#ExamplesModule',
-        data: {
-          title: 'examples.$TITLE'
-        },
       },
     ]
   },

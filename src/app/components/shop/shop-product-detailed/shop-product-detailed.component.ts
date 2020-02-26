@@ -7,17 +7,18 @@ import { ShopService } from '../services/shop.service';
 import { Product } from '../../../common/models/products.model';
 import { MessageBoxService } from '../../../core/services/message-box.service';
 import { ErrorHandlerService } from '../../../core/services/error-handler.service';
-import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { elementEventFullName } from '@angular/compiler/src/view_compiler/view_compiler';
 import { NotificationService } from 'src/app/core/services/notification.service';
 import { Category } from 'src/app/common/models/category-model';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
-  selector: 'app-example-list',
-  templateUrl: './shop-list.component.html',
-  styleUrls: ['./shop-list.component.scss'],
+  selector: 'app-shop-product-detailed',
+  templateUrl: './shop-product-detailed.component.html',
+  styleUrls: ['./shop-product-detailed.component.scss'],
 })
-export class ShopListComponent extends ComponentBase
+export class ShopProductDetailedComponent extends ComponentBase
   implements OnInit, OnDestroy {
   private _paginatedRequest: PaginatedRequest = {};
   page: PaginatedResult<Product>;
@@ -26,8 +27,8 @@ export class ShopListComponent extends ComponentBase
   pageSize = 9;
   currentPage = 1;
   //Modal vars
-  disabledSaveButton=true;
-  public modalInfo:Product={id:"",
+  public productId: string;
+  public productInfo:Product={id:"",
                             name:"",
                             description:"",
                             imgSource:"",
@@ -45,6 +46,8 @@ export class ShopListComponent extends ComponentBase
     private _messageBox: MessageBoxService,
     private _errorHandler: ErrorHandlerService,
     private modalService: NgbModal,
+    private readonly _route: ActivatedRoute,
+    private readonly _router: Router
   ) {
     super();
     this.getCategories();
@@ -52,43 +55,14 @@ export class ShopListComponent extends ComponentBase
 
 
   ngOnInit() {
-    this.getPage(1);
+    this.productId = this._route.snapshot.paramMap.get('id');
+     this.get(this.productId);
   }
 
-  getPage(page: number) {
-    this.currentPage=page;
-    console.log(this.currentPage);
-    this._paginatedRequest.page = page;
-    this._paginatedRequest.pageSize=this.pageSize;
-    this.registerRequest(
-      this._shopService.getPage(this._paginatedRequest)
-    ).subscribe((response) => {
-      this.page = response;
-    });
+  goBack(){
+    this._router.navigateByUrl("/shop")
   }
 
-  sort(value: string) {
-    this._paginatedRequest.orderBy = value;
-    this.getPage(this._paginatedRequest.page);
-  }
-
-  delete(product: Product) {
-    this._messageBox
-      .confirm(
-        { key: 'products.CONFIRM_DELETE', arg: { name: product.name } },
-        'products.DELETE'
-      )
-      .subscribe((result: boolean) => {
-        if (result) {
-          this._shopService.delete(product.id).subscribe(
-            () => {
-              this.getPage(1);
-            },
-            error => this._errorHandler.handle(error)
-          );
-        }
-      });
-  }
   //ngFor functions
   availabilityToArray(){
   if (this.selectedType!=undefined) {
@@ -98,7 +72,7 @@ export class ShopListComponent extends ComponentBase
 
  // Required boolean NgIf's functions
   hasProductDetails(){
-    if (this.modalInfo.productDetails.length<=0) {
+    if (this.productInfo.productDetails.length<=0) {
       return true;
     }
     return false;
@@ -110,31 +84,27 @@ export class ShopListComponent extends ComponentBase
     return false;
   }
 
-//Modal functions
-  openModal(content,id:string) {
-    this.page.items.forEach(element => {
-      if(element.id==id){
-        this.modalInfo={id:element.id,
-        name:element.name,
-        description:element.description,
-        imgSource:element.imgSource,
-        status:element.status,
-        categories:[],
-        productDetails:element.productDetails
-        };
-        console.log("found it!");
-      }
+  private get(productId: string) {
+    this.registerRequest(this._shopService.get(productId)).subscribe({
+      next:queryResult =>{
+        this.productInfo=queryResult;
+      console.log(this.productInfo);
+    },
+      error: errorResponse => this._errorHandler.handle(errorResponse),
     });
-    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title',centered:true}).result.then((result) => {
-      if (this.modalInfo.productDetails.length>0&&this.selectedType!=undefined&&this.selectedQty!=undefined) {
+  }
+
+//Modal functions
+  addCart() {
+      if (this.productInfo.productDetails.length>0&&this.selectedType!=undefined&&this.selectedQty!=undefined) {
 
         if (this.foundSameItem) {
          if (this.checkAvailabilityxQtyDesired()) {
-           localStorage.setItem("CartI:"+this.modalInfo.name+":"+this.selectedType.type,JSON.stringify({
-                                                                      productId:this.modalInfo.id,
-                                                                      name:this.modalInfo.name,
-                                                                      description:this.modalInfo.description,
-                                                                      imgSource:this.modalInfo.imgSource,
+           localStorage.setItem("CartI:"+this.productInfo.name+":"+this.selectedType.type,JSON.stringify({
+                                                                      productId:this.productInfo.id,
+                                                                      name:this.productInfo.name,
+                                                                      description:this.productInfo.description,
+                                                                      imgSource:this.productInfo.imgSource,
                                                                       qty:this.previousQty+this.selectedQty,
                                                                       productDetail:{
                                                                         id:this.selectedType.id,
@@ -152,11 +122,11 @@ export class ShopListComponent extends ComponentBase
       
          }
 
-      localStorage.setItem("CartI:"+this.modalInfo.name+":"+this.selectedType.type,JSON.stringify({
-                                                                      productId:this.modalInfo.id,
-                                                                      name:this.modalInfo.name,
-                                                                      description:this.modalInfo.description,
-                                                                      imgSource:this.modalInfo.imgSource,
+      localStorage.setItem("CartI:"+this.productInfo.name+":"+this.selectedType.type,JSON.stringify({
+                                                                      productId:this.productInfo.id,
+                                                                      name:this.productInfo.name,
+                                                                      description:this.productInfo.description,
+                                                                      imgSource:this.productInfo.imgSource,
                                                                       qty:this.selectedQty,
                                                                       productDetail:{
                                                                         id:this.selectedType.id,
@@ -167,21 +137,7 @@ export class ShopListComponent extends ComponentBase
       }));
       this.handleAddToCartSuccess('The item was successfully added to the cart');
       }
-    }, (reason) => {
-      //When dismissed set everything back to default
-      this.modalInfo={id:"",
-                            name:"",
-                            description:"",
-                            imgSource:"",
-                            status:0,
-                            categories:[],
-                            productDetails:[]
-                            };
-      this.selectedType=undefined;
-      this.selectedQty=undefined;
-      this.previousQty=0;
-      this.disabledSaveButton=true;
-    });
+   
   }
 
   private getCategories(){
@@ -197,7 +153,7 @@ export class ShopListComponent extends ComponentBase
       let key= localStorage.key(index);
       let value= localStorage.getItem(key);
       
-      if (key.includes("CartI:"+this.modalInfo.name+":"+this.selectedType.type)&&value.trim()!='') {
+      if (key.includes("CartI:"+this.productInfo.name+":"+this.selectedType.type)&&value.trim()!='') {
        return true;
       }
      }
@@ -211,7 +167,7 @@ export class ShopListComponent extends ComponentBase
       let key= localStorage.key(index);
       let value= localStorage.getItem(key);
       
-      if (key.includes("CartI:"+this.modalInfo.name+":"+this.selectedType.type)&&value.trim()!='') {
+      if (key.includes("CartI:"+this.productInfo.name+":"+this.selectedType.type)&&value.trim()!='') {
        let parsedValue=JSON.parse(value);
        if (this.selectedType.availability<(parsedValue.qty+this.selectedQty)) {
          return false;
@@ -226,40 +182,15 @@ export class ShopListComponent extends ComponentBase
 
   handleAddToCartSuccess(msg:string){
     this._notificationService.success(msg);
-//Values back to default
-    this.modalInfo={id:"",
-                            name:"",
-                            description:"",
-                            imgSource:"",
-                            status:0,
-                            categories:[],
-                            productDetails:[]
-                            };
-      this.selectedType=undefined;
-      this.selectedQty=undefined;
-      this.previousQty=0;
-      this.disabledSaveButton=true;
+  this.goBack();
   }
 
   handleAddToCartFailure(msg:string){
     this._notificationService.error(msg);
     //Values back to default
-    this.modalInfo={id:"",
-                            name:"",
-                            description:"",
-                            imgSource:"",
-                            status:0,
-                            categories:[],
-                            productDetails:[]
-                            };
-      this.selectedType=undefined;
-      this.selectedQty=undefined;
       this.previousQty=0;
-      this.disabledSaveButton=true;
   }
-  checkout(){
 
-  }
   typeChanged(){
     console.log(this.selectedType.type);
     if (this.selectedType.availability<=0) {
@@ -267,17 +198,6 @@ export class ShopListComponent extends ComponentBase
     }
   }
   qtyChanged(){
-    if(this.selectedType!=undefined&&this.selectedQty!=undefined){
-      this.disabledSaveButton=false;
-    }else{
-      this.disabledSaveButton=true;
-    }
-  }
-  updatePage(){
-    this.getPage(this.currentPage);
-  }
-  
-  filterbyCategory(category:any){
     
   }
 }

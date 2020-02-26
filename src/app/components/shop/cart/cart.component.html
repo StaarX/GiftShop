@@ -1,0 +1,63 @@
+           <div class="card">
+        <h4 class="text-center">Cart</h4>
+        <hr>
+        <div class="container">
+        <div *ngFor="let item of cartItems; let ii = index">
+          <div class="row">
+          <div class="col-3 card justify-content-center">
+            <div class="m-md-auto pr-2">
+            <img class="img-thumbnail"[src]="item.imgSource">
+            </div>
+            </div> 
+           <div class="col-7 card row">
+            
+            <div class="col-md-6 my-auto">
+
+            <div><strong>Name: </strong>{{item.name}} </div>
+            <div><strong>Type: </strong>{{item.productDetail.type}}</div>
+            <div>
+              <div>
+              <strong>Quantity:</strong> 
+            </div>
+                <select  class="form-control-sm mx-1" [ngModelOptions]="{standalone: true}" [(ngModel)]="selectedQty[ii]" id="categoriesSelect" (change)="qtyChanged(item,ii)">
+                  <option [ngValue]="undefined" [selected]='selected' disabled>{{item.qty}}</option>
+                  <option *ngFor="let itm of availabilityToArray(item.productDetail.availability); let i = index" [ngValue]="i+1" selected>{{i+1}}</option>
+                </select>
+              
+              <div>
+               each {{item.productDetail.price}}
+              </div>
+              </div>
+            </div>
+
+            <div class="col-md-6 my-auto row">
+              <div class="col text-md-center my-auto">
+              <strong>Total: </strong>{{item.qty*item.productDetail.price | number:'1.2-2'}}
+            </div>
+            </div>
+          
+            
+            </div>
+            <button class="btn col-2 text-center btn-danger" (click)="deleteItemFromCart(item)">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+          <hr>
+        </div>
+        <div class="row">
+          <div class="col-6 text-center"><strong>Total:</strong></div>
+          <div class="col-6 text-center">{{calculateTotal() | number:'1.2-2'}}</div>
+        </div>
+        <hr>
+        <div class="row card">
+      <div class="btn-group" role="group">
+        <button class="btn btn-warning" (click)="goBack()">Go to the shop</button>
+        <button class="btn btn-success">Check out</button>
+      </div>
+    </div>
+      </div>
+
+   </div>
+    
+
+

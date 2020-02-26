@@ -30,6 +30,12 @@
                   {{ 'validations.REQUIRED' | translate }}
                 </p>
                 <p
+                  *ngIf="form.controls.name.errors.pattern"
+                  class="text-danger error"
+                >
+                  Pattern does not match, name MUST not contain special characters or numbers.
+                </p>
+                <p
                   *ngIf="form.controls.name.errors.maxlength"
                   class="text-danger error"
                 >
@@ -63,16 +69,22 @@
               />
               <span
                 class="messages"
-                *ngIf="submitted &amp;&amp; form.controls.name.invalid"
+                *ngIf="submitted &amp;&amp; form.controls.description.invalid"
               >
                 <p
-                  *ngIf="form.controls.name.errors.required"
+                  *ngIf="form.controls.description.errors.required"
                   class="text-danger error"
                 >
                   {{ 'validations.REQUIRED' | translate }}
                 </p>
                 <p
-                  *ngIf="form.controls.name.errors.maxlength"
+                  *ngIf="form.controls.description.errors.pattern"
+                  class="text-danger error"
+                >
+                  Pattern does not match, description MUST not contain special characters or numbers.
+                </p>
+                <p
+                  *ngIf="form.controls.description.errors.maxlength"
                   class="text-danger error"
                 >
                   {{
@@ -80,17 +92,17 @@
                       | translate
                         : {
                             requiredLength:
-                              form.controls.name.errors.maxlength
+                              form.controls.description.errors.maxlength
                                 .requiredLength,
                             actualLength:
-                              form.controls.name.errors.maxlength.actualLength
+                              form.controls.description.errors.maxlength.actualLength
                           }
                   }}
                 </p>
               </span>
             </div>
           </div>
-
+          
           <div class="row form-group" style="margin-bottom:170px">
             <label for="imgSource" class="col-md-4 col-form-label required text-lg-right">{{
               'products.IMGSOURCE' | translate
@@ -107,21 +119,7 @@
                   (change)="convertImage($event)"
                 />
                 <label class="custom-file-label" for="imgSrc">Choose an image (JPG Only)</label>
-
-                <div class="card-img center square">
-                  <img [src]="imageUrl" class="img-thumbnail"> 
-                </div>
-                <input
-                  type="hidden"
-                  class="form-control"
-                  id="imgSource"
-                  formControlName="imgSource"
-                  name="ImageBase64"
-                />
-              </div>
-
-
-              <span
+                <span
                 class="messages"
                 *ngIf="submitted &amp;&amp; form.controls.imgSource.invalid"
               >
@@ -136,23 +134,27 @@
                   class="text-danger error"
                 >
                   {{
-                    'validations.MAX_LENGTH'
-                      | translate
-                        : {
-                            requiredLength:
-                              form.controls.imgSource.errors.maxlength
-                                .requiredLength,
-                            actualLength:
-                              form.controls.imgSource.errors.maxlength.actualLength
-                          }
+                    'File size exceeds 1 MB Limit.'
                   }}
                 </p>
               </span>
+                <div class="card-img center square">
+                  <img [src]="imageUrl" class="img-thumbnail"> 
+                </div>
+                <input
+                  type="hidden"
+                  class="form-control"
+                  id="imgSource"
+                  formControlName="imgSource"
+                  name="ImageBase64"
+                />
+              </div>
+              
             </div>
           </div>
            
           <div class="row form-group">
-            <label for="categoriesSelect" class="col-md-4 col-form-label required text-lg-right">Categories</label>
+            <label for="categoriesSelect" class="col-md-4 col-form-label text-lg-right">Categories</label>
             <div class="col-md-6">
               <select [ngModelOptions]="{standalone: true}" [(ngModel)]="selectedCategory" class="form-control" id="categoriesSelect">
                 <option [ngValue]="undefined" selected disabled>Please select an Category</option>
@@ -193,20 +195,20 @@
           <table class="table table-striped">
             <thead>
             <tr>
-              <th scope="col">#</th>
-              <th scope="col">Name</th>
-              <th scope="col">Desc</th>
-              <th scope="col">Delete</th>
+              <th class="text-center" scope="col">#</th>
+              <th class="text-center" scope="col">Name</th>
+              <th class="text-center" scope="col">Desc</th>
+              <th class="text-center" scope="col">Delete</th>
             </tr>
             </thead>
             <tbody>
             <tr *ngFor="let category of product?.categories; index as i">
-              <th scope="row">{{ i + 1 }}</th>
-              <td>
+              <th class="text-center" scope="row">{{ i + 1 }}</th>
+              <td class="text-center">
                 <ngb-highlight [result]="category.name" [term]="filter.value"></ngb-highlight>
               </td>
-              <td><ngb-highlight [result]="category.description" [term]="filter.value"></ngb-highlight></td>
-              <td><button type="button" (click)="deleteCategory(category.id)" class="btn btn-danger">Delete</button></td>
+              <td class="text-center"><ngb-highlight [result]="category.description" [term]="filter.value"></ngb-highlight></td>
+              <td class="text-center"><button type="button" (click)="deleteCategory(category.id)" class="btn btn-danger">Delete</button></td>
             </tr>
             </tbody>
           </table>

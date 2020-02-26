@@ -1,0 +1,29 @@
+img {
+  width: 225px;
+  height:225px;
+  }
+.fixImage {
+  text-align:center;
+}
+.i-am-centered{ 
+  margin: auto; max-width: 400px;
+}
+.subtitles{
+  font-size: large;
+  font-weight: 500;
+}
+@media screen and (max-width: 600px) and (min-width: 300px){
+  .mb-xs{
+  margin-bottom:  0.25rem;
+    }
+  }
+  @media screen and (max-width: 600px) and (min-width: 300px){
+    .mb-xs-5{
+    margin-bottom:  1.25rem;
+      }
+    }
+    @media screen and (max-width: 600px) and (min-width: 300px){
+      .bdrt-xs-1{
+      border-top: 1px solid;
+        }
+      }

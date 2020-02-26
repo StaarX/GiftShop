@@ -3,7 +3,35 @@
 
 </div>
 <app-panel [loading]="loading">
-
+<div class="row">
+<div class="col-sm-12 col-md-7">
+  <h5 class="text-center">Search by name</h5>
+  <input class="form-control" type="text">
+</div>
+<div class="col-sm-12 col-md-3">
+  <h5 class="text-center">Filter by category</h5>
+  <select [ngModelOptions]="{standalone: true}" [(ngModel)]="selectedCategorytoSort" class="form-control" id="sortByCategory" (change)="filterChanged()">
+    <option [ngValue]="undefined" selected disabled>Default</option>
+    <option *ngFor="let item of categories?.items" [ngValue]="item">{{item.name}}</option>
+</select>
+</div>
+<div class="col-sm-12 col-md-2">
+  <h5 class="text-center">Items per page</h5>
+  <select [ngModelOptions]="{standalone: true}" [(ngModel)]="pageSize" class="form-control" id="pageItems" (change)="updatePage()">
+    <option [ngValue]="undefined" selected disabled>Default</option>
+    <option [ngValue]="1">1</option>
+    <option [ngValue]="2">2</option>
+    <option [ngValue]="3">3</option>
+    <option [ngValue]="4">4</option>
+    <option [ngValue]="5">5</option>
+    <option [ngValue]="6">6</option>
+    <option [ngValue]="7">7</option>
+    <option [ngValue]="8">8</option>
+    <option [ngValue]="9">9</option> 
+</select>
+</div>
+</div>
+<hr>
  <!-- Modal start -->
   <ng-template #content let-modal>
     <!-- Modal header -->
@@ -15,7 +43,7 @@
     </div>
     <!-- Modal body -->
     <div class="modal-body">
-        <div class="text-center"><h5>{{modalInfo.name}}</h5>
+        <div class="text-center pointable" [routerLink]="['./', modalInfo.id, 'detailed']" (click)="modal.dismiss('Detailed')"><h5>{{modalInfo.name}}</h5>
         </div>
         <hr>
         <div class="mb-2 fixImage">
@@ -64,7 +92,7 @@
                 </div>
               </div>
 
-                <div *ngIf="hasntTypeValue()">
+                <div *ngIf="!hasTypeValue()">
                   <div class="btn-xs btn-fluid btn-danger text-center mt-2 mb-3" disabled>
                     There are no items available
                   </div>  
@@ -80,7 +108,7 @@
     <!-- Modal Footer -->
     <div class="modal-footer">
       <button type="button" class="btn btn-danger" (click)="modal.dismiss('Close button')">Close</button>
-      <button type="button" class="btn btn-success" (click)="modal.close()">Save</button>
+      <button type="button" class="btn btn-success" [disabled]="disabledSaveButton" (click)="modal.close()">Save</button>
     </div>
     
   </ng-template>
@@ -88,7 +116,7 @@
   
 
   <div class="row">
-    <div class="col-md-4" *ngFor="let item of page?.items">
+    <div class="col-lg-3 col-md-4 col-sm-5 center" *ngFor="let item of page?.items">
         <div class="card bg-light p-1 m-1">
             <div class="fixImage">
               <img [src]="item.imgSource" class="img-fluid img-thumbnail"  [alt]="item.name"/>
@@ -97,14 +125,17 @@
                 <li><strong>Name:</strong> {{ item.name}}</li>
                 <li><strong>Description:</strong> {{ item.description }}</li>
             </ul>
-            <div class="btn-group" role="group" aria-label="Basic example">
+            <div class="btn-group" role="group" aria-label="buyNcartButtons">
               <button class="btn btn-success" id="buyButton" (click)="checkout()">Buy</button>
               <button class="btn btn-primary" id="addCart" (click)="openModal(content,item.id)"><i class="fas fa-cart-plus"></i> Add to Cart</button>
             </div>
         </div>
     </div>
-    <div class="col-md-6 center">
-    <app-pagination [page]="page" (pageChange)="getPage($event)"></app-pagination>
-    </div>
 </div>
+  <div class="row">
+    <div class="col-12 justify-content-center">
+    <app-pagination [page]="page" (pageChange)="getPage($event)"></app-pagination>
+  </div>
+    </div>
+  
 </app-panel>

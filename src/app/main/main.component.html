@@ -1,24 +1,24 @@
-<nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow navbar-expand">
-  <a class="navbar-brand col-sm-3 col-md-2 mr-0 text-center" [routerLink]="['/']">{{ 'app.NAME' | translate }}</a>
+<nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow navbar-expand-md">
+  <a class="navbar-brand fixAppName col-sm-3 col-md-2 mr-0 text-center" [routerLink]="['/shop']">{{ 'app.NAME' | translate }}</a>
 
-    <app-title class="navbar-text ml-auto"></app-title>
+    <app-title class="navbar-text ml-auto fixTitle"></app-title>
     
   <!-- <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search"> -->
   <ul class="navbar-nav px-3 ml-auto">
+    <!--Start of the dropdown-->
+    <li class="nav-item d-md-block d-none fixNavItem" ngbDropdown (openChange)="loadCart()"  #myDrop="ngbDropdown">
 
-    <li class="nav-item" style="padding-right: 10px;" display="dynamic" ngbDropdown (openChange)="loadCart()"  #myDrop="ngbDropdown">
-
-      <a class="nav-link" style="cursor: pointer" ngbDropdownToggle id="navbarDropdown1" role="button">
+      <a class="nav-link pointable"ngbDropdownToggle id="navbarDropdown1" role="button">
         <i class="fas fa-shopping-cart"></i>
         Cart
       </a>
 
-      <div ngbDropdownMenu class="dropdown-menu overflow-auto">
+      <div ngbDropdownMenu class="dropdown-menu dropdown-menu-right overflow-auto">
         <div class="divform">
-        <h4 class="text-center">Cart</h4>
+        <h4 class="text-center pointable" [routerLink]="['/shop/cart']" (click)="$event.stopPropagation(); myDrop.close();">Cart</h4>
         <hr>
         <div class="container">
-        <div *ngFor="let item of cartItems">
+        <div *ngFor="let item of cartItems; let ii = index">
           <div class="row">
           <div class="col-3 card">
             <img [src]="item.imgSource">
@@ -26,7 +26,19 @@
            <div class="col-7 card">
             <div>Name: {{item.name}} </div>
             <div>Type: {{item.productDetail.type}}</div>
-            <div>Quantity: {{item.qty}} each {{item.productDetail.price}}</div>
+            <div class="input-group">
+              <div>
+              Quantity: 
+            </div>
+                <select  class="form-control-sm" [ngModelOptions]="{standalone: true}" [(ngModel)]="selectedQty[ii]" id="categoriesSelect" (change)="qtyChanged(item,ii)">
+                  <option [ngValue]="undefined" [selected]='selected' disabled>{{item.qty}}</option>
+                  <option *ngFor="let itm of availabilityToArray(item.productDetail.availability); let i = index" [ngValue]="i+1" selected>{{i+1}}</option>
+                </select>
+              
+              <div>
+               each {{item.productDetail.price}}
+              </div>
+              </div>
             <div>Total: {{item.qty*item.productDetail.price | number:'1.2-2'}}</div>
             </div>
             <button class="btn col-2 text-center btn-danger" (click)="deleteItemFromCart(item)">
@@ -50,6 +62,13 @@
       </div>
 
    </div>
+    </li>
+<!--End of the dropdown-->
+    <li class="nav-item d-md-none d-lg-none d-xl-none fixNavItem">
+      <a class="nav-link" style="cursor: pointer" role="button" [routerLink]="['/shop/cart']" >
+        <i class="fas fa-shopping-cart"></i>
+        Cart
+      </a>
     </li>
 
 
@@ -79,7 +98,7 @@
       </div>
     </nav>
 
-    <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+    <main class="col-md-9 ml-sm-auto col-lg-10 px-md-4 pt-md-6 pt-sm-5 pt-xs-50px">
       <router-outlet></router-outlet>
     </main>
   </div>

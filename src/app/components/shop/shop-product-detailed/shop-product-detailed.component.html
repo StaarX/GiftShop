@@ -1,0 +1,74 @@
+<div class="py-md-1">
+  <h2 class="text-center"></h2> 
+
+</div>
+<app-panel [loading]="loading">
+<div class="row mx-5">
+  <hr>
+  <div class="text-center"><h2>{{productInfo.name}}</h2></div>
+  <hr>
+</div>
+
+<div class="row">
+  
+  <div class="col-md-3 card border-0">
+    <div class="mx-auto my-md-2 ">
+      <img class="img-thumbnail border-0" [src]="productInfo.imgSource"></div>
+  </div>
+
+  <div class="col-md-9 border-left d-flex align-items-center">
+    <div class="my-md-auto">
+      <div class="my-md-4">
+        <label class="subtitles">Description: </label>
+        <label class="pl-1">{{productInfo.description}}</label>
+    </div>
+    <div class="my-md-4">
+      <div><label class="subtitles">Type: </label>
+        <label class="pl-1">{{selectedType?.type || 'There is not a type selected'}}</label>
+      </div>
+    </div>
+    <div class="mt-md-4">
+      <label class="subtitles">Price: </label>
+       
+      <label class="pl-1">{{selectedType?.price || 'There is not a type selected'}}</label>
+    </div>
+  </div>
+    
+  </div>
+
+</div>
+
+<div class="row border-top">
+  <div class="col-md-3">
+    <div *ngIf="!hasTypeValue()" class="btn-xs btn-fluid btn-danger text-center mt-2 mb-3" disabled>
+      There are no items available
+    </div>
+    <div *ngIf="hasTypeValue()" class="btn-xs btn-fluid btn-success text-center mt-2 mb-3" disabled>
+      Available
+    </div>
+<div>
+  <select [ngModelOptions]="{standalone: true}" [(ngModel)]="selectedType" class="form-control" id="categoriesSelect" (change)="typeChanged()">
+    <option [ngValue]="undefined" selected disabled>Please select a Type</option>
+    <option *ngFor="let item of productInfo?.productDetails" [ngValue]="item">{{item.type}}</option>
+</select>
+</div>
+<div class="mt-1 mb-xs">
+  <select [ngModelOptions]="{standalone: true}" [(ngModel)]="selectedQty" class="form-control" id="categoriesSelect" (change)="qtyChanged()">
+    <option [ngValue]="undefined" [selected]='selected' disabled>Select an amount</option>
+    <option *ngFor="let item of availabilityToArray(); let i = index" [ngValue]="i+1">{{i+1}}</option>
+</select></div>
+
+<div class="btn-group d-flex mt-3">
+  <button type="button" class="btn btn-warning" (click)="goBack()">Go to shop</button>
+  <button class="btn btn-primary" id="addCart" (click)="addCart()"><i class="fas fa-cart-plus"></i> Add to Cart</button>
+</div>
+  </div>
+  
+  <div class="col-md-9 border-left mb-xs-5">
+   <h3>Item categories: </h3>
+   <div>
+    <button *ngFor="let item of productInfo?.categories" class="btn btn-outline-primary" disabled>{{item.name}}</button>
+   </div>
+  </div>
+</div>
+</app-panel>

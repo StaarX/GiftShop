@@ -48,8 +48,8 @@ export class ProductsListComponent extends ComponentBase
   delete(example: Product) {
     this._messageBox
       .confirm(
-        { key: 'examples.CONFIRM_DELETE', arg: { name: example.name } },
-        'examples.DELETE'
+        { key: 'products.CONFIRM_DELETE', arg: { name: example.name } },
+        'products.DELETE'
       )
       .subscribe((result: boolean) => {
         if (result) {

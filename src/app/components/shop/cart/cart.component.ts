@@ -1,35 +1,31 @@
-import { Component} from '@angular/core';
-
-import { NavItem } from '../common/models/nav-item.model';
-import { AuthService } from '../core/services/auth.service';
+import { Component } from '@angular/core';
+import { AuthService } from '../../../core/services/auth.service';
 import { Router } from '@angular/router';
 
+
 @Component({
-  selector: 'app-main',
-  templateUrl: './main.component.html',
-  styleUrls: ['./main.component.scss']
+  selector: 'app-cart',
+  templateUrl: './cart.component.html',
+  styleUrls: ['./cart.component.scss']
 })
-export class MainComponent{
-  dropdownState=false;
+export class CartComponent {
   public cartItems=[];
   selectedQty=[];
 
-  navItems: NavItem[] = [
-    {name:'Products',route:['/products']},
-    {name:'Shop',route:['/shop']}
-  ];
 
   constructor(private _authService: AuthService,private readonly _router: Router) { 
-    if(this._router.url=='/'){
-      this._router.navigateByUrl("/shop");
-    }
+    
   }
 
-  logOut() {
-    this._authService.logOut();
+  ngOnInit(){
+    this.loadCart();
   }
+
 
   //Cart functions
+  goBack(){
+    this._router.navigateByUrl("/shop")
+  }
   loadCart(){    
     this.cartItems=[];
     if(localStorage.length>0){
@@ -50,7 +46,7 @@ export class MainComponent{
 
   deleteItemFromCart(thing:any){
     localStorage.removeItem(thing.key);
-    
+
     for (let index = 0; index < this.cartItems.length; index++) {
     
       if (this.cartItems[index].key==thing.key) {

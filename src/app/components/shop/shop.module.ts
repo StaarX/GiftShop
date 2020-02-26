@@ -6,9 +6,11 @@ import { ShopListComponent } from './shop-list/shop-list.component';
 import { ShopService } from './services/shop.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { ShopProductDetailedComponent } from './shop-product-detailed/shop-product-detailed.component';
+import { CartComponent } from './cart/cart.component';
 
 @NgModule({
-  declarations: [ShopListComponent],
+  declarations: [ShopListComponent,ShopProductDetailedComponent,CartComponent],
   imports: [
     SharedModule,
     FormsModule,

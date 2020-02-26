@@ -104,3 +104,23 @@ img {
 .fixTotal{
   margin-left: 0px;
 }
+.fixAppName{
+  width: auto;
+}
+.fixNavItem{
+  padding-right: 10px;
+}
+.pointable{
+  cursor: pointer;
+}
+@media screen and (max-width: 1921px) and (min-width: 768px){
+.fixTitle{
+  padding-left: 12.5rem;
+}
+}
+@media screen and (max-width: 600px) and (min-width: 300px){
+.pt-xs-50px{
+padding-top: 55px;
+  }
+}
+ 

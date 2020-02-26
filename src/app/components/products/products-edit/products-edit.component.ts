@@ -55,14 +55,13 @@ export class ProductsEditComponent extends ComponentBase implements OnInit {
     this.getCategories();
     console.log("Categories called");
     this.form = fb.group({
-      description: [ '', [Validators.required, Validators.maxLength(100), Validators.pattern(Regex.LettersNSpaces)]],
-      name: ['', [Validators.required, Validators.maxLength(50), Validators.pattern(Regex.LettersNSpaces)]],
-      imgSource: ['', [Validators.maxLength(2000000)],]
+      description: [ '', [Validators.required, Validators.maxLength(100), Validators.pattern(Regex.Desc)]],
+      name: ['', [Validators.required, Validators.maxLength(100), Validators.pattern(Regex.Name)],],
+      imgSource: ['', [Validators.required,Validators.maxLength(1500000)],]
     });
   }
 
   ngOnInit() {
-    console.log(Regex.LettersNSpaces);
     this.productId = this._route.snapshot.paramMap.get('id');
     if (this.productId) {
       this.setEditMode();
