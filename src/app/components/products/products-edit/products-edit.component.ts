@@ -11,6 +11,9 @@ import { Category } from 'src/app/common/models/category-model';
 import { PaginatedResult } from 'src/app/common/models/paginated-result.model';
 import { Product } from 'src/app/common/models/products.model';
 import { Regex } from 'src/app/shared/Regex';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ProductDetail } from 'src/app/common/models/productDetail-model';
+import { Identifiers } from '@angular/compiler';
 
 
 @Component({
@@ -20,12 +23,15 @@ import { Regex } from 'src/app/shared/Regex';
 })
 export class ProductsEditComponent extends ComponentBase implements OnInit {
   public form: FormGroup;
+  public formDetails: FormGroup;
   public productId: string;
   public submitted = false;
+  public tried=false;
   private _paginatedRequest: PaginatedRequest = {};
   public categories:PaginatedResult<Category>;
   filter = new FormControl('');
   selectedCategory:any;
+  selectedDetail:any;
   imageUrl: string = "";
 
   public product:Product= {id:"",
@@ -49,11 +55,20 @@ export class ProductsEditComponent extends ComponentBase implements OnInit {
     private readonly _router: Router,
     private readonly _errorHandler: ErrorHandlerService,
     private readonly _notificationService: NotificationService,
-    public fb: FormBuilder
+    public fb: FormBuilder,
+    private modalService: NgbModal
   ) {
     super();
     this.getCategories();
     console.log("Categories called");
+
+    this.formDetails = fb.group({
+      type:['',[Validators.required, Validators.maxLength(100), Validators.pattern(Regex.Letters)]],
+      availability:['',[Validators.required, Validators.maxLength(100), Validators.pattern(Regex.Numbers)]],
+      price:['',[Validators.required, Validators.maxLength(100), Validators.pattern(Regex.Numbers)]],
+      priceCents:['',[Validators.required, Validators.maxLength(100), Validators.pattern(Regex.Numbers)]]
+    });
+
     this.form = fb.group({
       description: [ '', [Validators.required, Validators.maxLength(100), Validators.pattern(Regex.Desc)]],
       name: ['', [Validators.required, Validators.maxLength(100), Validators.pattern(Regex.Name)],],
@@ -71,7 +86,7 @@ export class ProductsEditComponent extends ComponentBase implements OnInit {
     }
     
   }
-  
+
   doSubmit() {
     this.submitted = true;
     if (this.form.invalid) {
@@ -83,6 +98,7 @@ export class ProductsEditComponent extends ComponentBase implements OnInit {
 
     if (this.productId) {
       this.insertCategoriesIntoModel(model);
+      this.insertProductDetailsIntoModel(model);
       this.registerRequest(
         this._productsService.update(this.productId, model)
       ).subscribe(
@@ -96,6 +112,7 @@ export class ProductsEditComponent extends ComponentBase implements OnInit {
       );
     } else {
       this.insertCategoriesIntoModel(model);
+      this.insertProductDetailsIntoModel(model);
       this.registerRequest(this._productsService.save(model)).subscribe(
         () => {
           this.form.markAsPristine();
@@ -105,6 +122,17 @@ export class ProductsEditComponent extends ComponentBase implements OnInit {
           this._errorHandler.handle(errorResponse);
         }
       );
+    }
+  }
+
+  private insertProductDetailsIntoModel(model:any){
+    if(this.product.productDetails.length>0){
+      var aux = []
+    for (let index = 0; index < this.product.productDetails.length; index++) {
+      
+      aux.push(this.product.productDetails[index]);
+    }
+    model.ProductDetails=aux;
     }
   }
 
@@ -197,5 +225,82 @@ export class ProductsEditComponent extends ComponentBase implements OnInit {
         this.form.get('imgSource').setValue(this.imageUrl);
       }
     }
+  }
+
+  //Product details modal
+  openModal(content,id:string) {
+    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title',centered:true}).result.then((result) => {
+      
+    }, (reason) => {
+      //When dismissed set everything back to default
+      
+    });
+  }
+
+  defaultForm(){
+    this.formDetails.reset();
+    this.tried=false;
+  }
+
+  loadDetail(){
+    if (this.selectedDetail==undefined) {
+      this._notificationService.error('There is not a detail selected');
+        return;
+    }
+
+    this.formDetails.get("type").setValue(this.product.productDetails[this.selectedDetail].type);
+    this.formDetails.get("availability").setValue(this.product.productDetails[this.selectedDetail].availability);
+    this.formDetails.get("price").setValue(this.product.productDetails[this.selectedDetail].price.toString().split(".")[0]);
+    this.formDetails.get("priceCents").setValue(this.product.productDetails[this.selectedDetail].price.toString().split(".")[1]);
+  }
+
+  insertDetail(){
+    this.tried=true;
+  if (this.formDetails.invalid) {
+    this._notificationService.error('Please check your fields');
+      return;
+  }
+  try {
+    
+  let aux:ProductDetail={
+    productId:this.product.id,
+    type:this.formDetails.get("type").value,
+    availability:this.formDetails.get("availability").value,
+    price:Number.parseFloat(this.formDetails.get("price").value+"."+this.formDetails.get("priceCents").value)
+};
+this.product.productDetails.push(aux);
+this._notificationService.success('The detail was successfully created');
+  } catch (error) {
+    this._notificationService.success('There was a error while creating the detail');
+  }
+  }
+  updateDetail(id:number){
+    this.tried=true;
+  if (this.formDetails.invalid) {
+      this._notificationService.error('Please check your fields');
+        return;
+    }
+  if (this.selectedDetail==undefined || this.selectedDetail<0) {
+    this._notificationService.error('There is no detail selected');
+        return;
+  }
+  try {
+    this.product.productDetails[this.selectedDetail].type=this.formDetails.get("type").value;
+    this.product.productDetails[this.selectedDetail].availability=this.formDetails.get("availability").value;
+    this.product.productDetails[this.selectedDetail].price=Number.parseFloat(this.formDetails.get("price").value+"."+this.formDetails.get("priceCents").value);
+    this._notificationService.success('The detail was successfully updated');
+  } catch (error) {
+    this._notificationService.success('There was a error while updating the detail');
+  }
+    
+  }
+  deleteDetail(){
+  if (this.selectedDetail==undefined || this.selectedDetail<0) {
+      this._notificationService.error('There is not a detail selected');
+      return;
+  }
+
+  this.product.productDetails.splice(this.selectedDetail--,1);
+  this.selectedDetail=undefined;
   }
 }

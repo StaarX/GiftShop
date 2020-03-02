@@ -98,5 +98,16 @@
     "EDIT": "Edit Product",
     "DELETE": "Delete Product",
     "CONFIRM_DELETE": "Are you sure you want to delete the Product {{name}}?"
+  },
+  "productDetails":{
+    "TITLE": "Manage product details",
+    "TYPE": "Type",
+    "AVAILABILITY": "Availability",
+    "PRICE":"Price",
+    "BUTTON":"Manage product details",
+    "ADD": "Add Product",
+    "EDIT": "Edit Product",
+    "DELETE": "Delete Product",
+    "CONFIRM_DELETE": "Are you sure you want to delete the Product {{name}}?"
   }
 }

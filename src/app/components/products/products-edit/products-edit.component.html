@@ -13,12 +13,18 @@
             }}</label>
 
             <div class="col-md-6">
-              <input
+              <div class="input-group">
+                <input
                 class="form-control"
                 id="name"
                 type="text"
                 formControlName="name"
               />
+              <div *ngIf="editMode" class="input-group-append">
+                <button type="button" class="btn btn-outline-success" (click)="openModal(content)">{{ 'productDetails.BUTTON' | translate }}</button>
+              </div>
+              </div>
+              
               <span
                 class="messages"
                 *ngIf="submitted &amp;&amp; form.controls.name.invalid"
@@ -156,14 +162,16 @@
           <div class="row form-group">
             <label for="categoriesSelect" class="col-md-4 col-form-label text-lg-right">Categories</label>
             <div class="col-md-6">
-              <select [ngModelOptions]="{standalone: true}" [(ngModel)]="selectedCategory" class="form-control" id="categoriesSelect">
+            <div class="input-group">
+              <select [ngModelOptions]="{standalone: true}" [(ngModel)]="selectedCategory" class="custom-select" id="categoriesSelect">
                 <option [ngValue]="undefined" selected disabled>Please select an Category</option>
                   <option *ngFor="let item of categories?.items" [ngValue]="item" [selected]="item.type == 'back'">{{item.name}}</option>
               </select>
-          </div>
-          <div class="col">
+          <div class="input-group-append">
             <button type="button" (click)="addList()" class="btn btn-success">+</button>
           </div>
+        </div>
+      </div>
         </div>
           
 
@@ -173,13 +181,9 @@
 
       <div class="row form-group">
         <div class="col-md">
-
-
       <div class="row form-group">
-
-        
         <div class="col-md-10 form-group form-inline card border-0">
-          Search for Categories: <input class="form-control ml-2" type="text" [formControl]="filter"/>
+          Search for Categories: <input class="form-control ml-md-2" type="text" [formControl]="filter"/>
       </div>
 
         <div class="col-md-2 text-right form-actions">
@@ -215,6 +219,202 @@
       </div>
     </div>
     </form>
+
+    <!-- Modal start -->
+  <ng-template #content let-modal>
+    <!-- Modal header -->
+    <div class="modal-header text-center d-inline-block">
+        <h2>{{ 'productDetails.TITLE' | translate }}</h2>
+    </div>
+    <!-- Modal body -->
+    <div class="modal-body">
+
+      <div class="form-group">
+        <select [ngModelOptions]="{standalone: true}" [(ngModel)]="selectedDetail" class="custom-select" id="categoriesSelect" (change)="loadDetail()">
+          <option [ngValue]="undefined" selected disabled>Select a detail</option>
+            <option *ngFor="let item of product?.productDetails; let i = index"[ngValue]="i" [selected]="item.type == 'back'">{{item.type}}</option>
+        </select>
+  </div>
+
+      <!--Start of the form-->
+      <form [formGroup]="formDetails" autocomplete="off">
+        <!--Type row-->
+         <div class="row form-group">
+          <label for="type" class="col-md-4 col-form-label required text-lg">{{
+            'productDetails.TYPE' | translate
+          }}</label>
+          <div class="col-md-8">
+            <input
+            class="form-control"
+            id="type"
+            type="text"
+            formControlName="type"
+            placeholder="Enter a type"
+          />
+          <span
+                class="messages"
+                *ngIf="tried &amp;&amp; formDetails.controls.type.invalid"
+              >
+                <p
+                  *ngIf="formDetails.controls.type.errors.required"
+                  class="text-danger error"
+                >
+                  {{ 'validations.REQUIRED' | translate }}
+                </p>
+                <p
+                  *ngIf="formDetails.controls.type.errors.pattern"
+                  class="text-danger error"
+                >
+                {{ 'validations.DETAILVAL' | translate }}
+                </p>
+                <p
+                  *ngIf="formDetails.controls.type.errors.maxlength"
+                  class="text-danger error"
+                >
+                  {{
+                    'validations.MAX_LENGTH'
+                      | translate
+                        : {
+                            requiredLength:
+                            formDetails.controls.type.errors.maxlength
+                                .requiredLength,
+                            actualLength:
+                            formDetails.controls.type.errors.maxlength.actualLength
+                          }
+                  }}
+                </p>
+              </span>
+        </div> 
+         </div>
+         <!--Availability row-->
+         <div class="row form-group">
+          <label for="type" class="col-md-4 col-form-label required text-lg-left">{{
+            'productDetails.AVAILABILITY' | translate
+          }}</label>
+          <div class="col-md-8">
+            <input
+            class="form-control"
+            id="availability"
+            type="number"
+            formControlName="availability"
+            min="1"
+            max="99999"
+            placeholder="0"
+          />
+          <span
+                class="messages"
+                *ngIf="tried &amp;&amp; formDetails.controls.availability.invalid"
+              >
+                <p
+                  *ngIf="formDetails.controls.availability.errors.required"
+                  class="text-danger error"
+                >
+                  {{ 'validations.AVAILVAL' | translate }}
+                </p>
+                <p
+                  *ngIf="formDetails.controls.availability.errors.pattern"
+                  class="text-danger error"
+                >
+                {{ 'validations.AVAILVAL' | translate }}
+                </p>
+                <p
+                  *ngIf="formDetails.controls.availability.errors.maxlength"
+                  class="text-danger error"
+                >
+                  {{
+                    'validations.MAX_LENGTH'
+                      | translate
+                        : {
+                            requiredLength:
+                            formDetails.controls.availability.errors.maxlength
+                                .requiredLength,
+                            actualLength:
+                            formDetails.controls.availability.errors.maxlength.actualLength
+                          }
+                  }}
+                </p>
+              </span>
+        </div> 
+         </div>
+         <!--Price row-->
+         <div class="row form-group">
+          <label for="type" class="col-md-4 col-form-label required text-lg-left">{{
+            'productDetails.PRICE' | translate
+          }}</label>
+          <div class="col-md-8">
+            <div class="input-group">
+              <!--Input price-->
+              <input class="form-control"
+              id="price"
+              type="number"
+              formControlName="price"
+              min="1"
+              max="99999"
+              placeholder="0"
+               >
+              <div class="input-group-append">
+                <div class="input-group-text">.</div>
+              </div>
+              <!--Input price cents-->
+              <input class="form-control"
+              id="priceCents"
+              type="number"
+              formControlName="priceCents"
+              min="0"
+              max="99"
+              placeholder="0"
+              >
+            </div>
+            <span
+                class="messages"
+                *ngIf="tried &amp;&amp; (formDetails.controls.priceCents.invalid &amp;&amp; formDetails.controls.price.invalid)"
+              >
+                <p
+                  *ngIf="formDetails.controls.priceCents?.errors?.required &amp;&amp;  formDetails.controls.price?.errors?.required"
+                  class="text-danger error"
+                >
+                  {{ 'validations.PRICE' | translate }}
+                </p>
+                <p
+                  *ngIf="formDetails.controls.priceCents?.errors?.pattern &amp;&amp; formDetails.controls.price?.errors?.pattern"
+                  class="text-danger error"
+                >
+                {{ 'validations.PRICE' | translate }}
+                </p>
+                <p
+                  *ngIf="formDetails.controls.priceCents?.errors?.maxlength &amp;&amp; formDetails.controls.price?.errors?.maxlength"
+                  class="text-danger error"
+                >
+                  {{
+                    'validations.MAX_LENGTH'
+                      | translate
+                        : {
+                            requiredLength:
+                            formDetails.controls.priceCents.errors.maxlength
+                                .requiredLength,
+                            actualLength:
+                            formDetails.controls.priceCents.errors.maxlength.actualLength
+                          }
+                  }}
+                </p>
+              </span>
+        </div> 
+         </div>
+      </form>
+      <!--End of the form-->
+    </div>
+    <!-- Modal Footer -->
+    <div class="modal-footer d-block">
+      <div class="btn-group d-flex">
+        <button type="button" class="btn btn-danger" (click)="deleteDetail()"><i class="fas fa-trash mr-2"></i>Delete</button>
+        <button type="button" class="btn btn-primary" (click)="updateDetail()"><i class="fas fa-upload mr-2"></i>Update</button>
+        <button type="button" class="btn btn-dark" (click)="defaultForm()"><i class="fas fa-plus mr-2"></i>New</button>
+        <button type="button" class="btn btn-success" (click)="insertDetail()"><i class="fas fa-plus mr-2"></i>Create</button>
+      </div>
+    </div>
+    
+  </ng-template>
+  <!-- Modal end -->
  
   </app-panel>
 </div>

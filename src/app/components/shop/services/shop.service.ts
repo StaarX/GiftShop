@@ -26,6 +26,10 @@ export class ShopService {
     const params: any = query;
     return this._httpClient.get<PaginatedResult<Product>>(this._url, { params });
   }
+  getPageFilteredByCategory(query: PaginatedRequest, id:string): Observable<PaginatedResult<Product>> {
+    const params: any = query;
+    return this._httpClient.get<PaginatedResult<Product>>(this._url+"/categoryfiltered/"+id, { params });
+  }
   getPageCategories(query: PaginatedRequest): Observable<PaginatedResult<Category>> {
     const params: any = query;
     return this._httpClient.get<PaginatedResult<Category>>(this._url+'/categories', { params });

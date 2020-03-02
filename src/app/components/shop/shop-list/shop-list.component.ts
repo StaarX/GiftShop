@@ -25,6 +25,7 @@ export class ShopListComponent extends ComponentBase
   selectedCategorytoSort;
   pageSize = 9;
   currentPage = 1;
+  currentTerm = '';
   //Modal vars
   disabledSaveButton=true;
   public modalInfo:Product={id:"",
@@ -57,19 +58,20 @@ export class ShopListComponent extends ComponentBase
 
   getPage(page: number) {
     this.currentPage=page;
-    console.log(this.currentPage);
     this._paginatedRequest.page = page;
     this._paginatedRequest.pageSize=this.pageSize;
-    this.registerRequest(
-      this._shopService.getPage(this._paginatedRequest)
-    ).subscribe((response) => {
-      this.page = response;
-    });
-  }
 
-  sort(value: string) {
-    this._paginatedRequest.orderBy = value;
-    this.getPage(this._paginatedRequest.page);
+    if (this.selectedCategorytoSort!=undefined && this.currentTerm=='') {
+      this.filterbyCategory();
+      return;
+    } else if(this.currentTerm!='' && this.selectedCategorytoSort==undefined){
+      this.filterbyTerm();
+      return;
+    } else if(this.currentTerm!='' && this.selectedCategorytoSort!=undefined){
+      this.filterbyTermAndCategory();
+      return;
+    }
+    this.getThePage();
   }
 
   delete(product: Product) {
@@ -273,11 +275,71 @@ export class ShopListComponent extends ComponentBase
       this.disabledSaveButton=true;
     }
   }
+
   updatePage(){
-    this.getPage(this.currentPage);
+    this.filterIt();
   }
+
+
+  filterIt(){
+    this._paginatedRequest.page=this.currentPage;
+    this._paginatedRequest.pageSize=this.pageSize;
+    if (this.selectedCategorytoSort!=undefined && this.currentTerm=='') {
+      this.filterbyCategory();
+      return;
+    } else if(this.currentTerm!='' && this.selectedCategorytoSort==undefined){
+      this.filterbyTerm();
+      return;
+    } else if(this.currentTerm!='' && this.selectedCategorytoSort!=undefined){
+      this.filterbyTermAndCategory();
+      return;
+    }
+    this.getThePage();
+  }
+
+
+  getThePage(){
+    this.registerRequest(
+      this._shopService.getPage(this._paginatedRequest)
+    ).subscribe((response) => {
+      this.page = response;
+    });
+  }
+
+  filterbyTerm(){
+          this._paginatedRequest.page = this.currentPage;
+          this._paginatedRequest.term = this.currentTerm;
+          this._paginatedRequest.pageSize=this.pageSize;
+          this.registerRequest(
+            this._shopService.getPage(this._paginatedRequest)
+          ).subscribe((response) => {
+            this.page = response;
+            this._paginatedRequest.term='';
+          });
+  }
+
+  filterbyTermAndCategory(){
+    this._paginatedRequest.term = this.currentTerm;
+    this._paginatedRequest.page = this.currentPage;
+    this._paginatedRequest.pageSize=this.pageSize;
+    this.registerRequest(
+      this._shopService.getPageFilteredByCategory(this._paginatedRequest,this.selectedCategorytoSort.id)
+    ).subscribe((response) => {
+      this.page = response;
+      this._paginatedRequest.term='';
+    });
+  }
+
   
-  filterbyCategory(category:any){
-    
+  filterbyCategory(){
+          this._paginatedRequest.page = this.currentPage;
+          this._paginatedRequest.pageSize=this.pageSize;
+          this.registerRequest(
+            this._shopService.getPageFilteredByCategory(this._paginatedRequest,this.selectedCategorytoSort.id)
+          ).subscribe((response) => {
+            this.page = response;
+            console.log("Do it enter here?");
+            console.log(response);
+          });
   }
 }

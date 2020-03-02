@@ -1,19 +1,30 @@
 <div class="py-md-3">
   <h2 class="text-center">Gift Shop</h2> 
 
-</div>
 <app-panel [loading]="loading">
 <div class="row">
 <div class="col-sm-12 col-md-7">
   <h5 class="text-center">Search by name</h5>
-  <input class="form-control" type="text">
+
+  <div class="input-group">
+    <input
+    class="form-control"
+    id="search"
+    type="text"
+    [(ngModel)]="currentTerm"
+  />
+  <div class="input-group-append">
+    <button type="button" class="btn btn-secondary" (click)="filterIt()">{{ 'shop.SEARCH' | translate }}</button>
+  </div>
+  </div>
+
 </div>
 <div class="col-sm-12 col-md-3">
   <h5 class="text-center">Filter by category</h5>
-  <select [ngModelOptions]="{standalone: true}" [(ngModel)]="selectedCategorytoSort" class="form-control" id="sortByCategory" (change)="filterChanged()">
-    <option [ngValue]="undefined" selected disabled>Default</option>
+  <select [ngModelOptions]="{standalone: true}" [(ngModel)]="selectedCategorytoSort" class="form-control" id="sortByCategory" (change)="filterIt()">
+    <option [ngValue]="undefined" selected>None</option>
     <option *ngFor="let item of categories?.items" [ngValue]="item">{{item.name}}</option>
-</select>
+  </select>
 </div>
 <div class="col-sm-12 col-md-2">
   <h5 class="text-center">Items per page</h5>
@@ -123,7 +134,7 @@
             </div>
             <ul>
                 <li><strong>Name:</strong> {{ item.name}}</li>
-                <li><strong>Description:</strong> {{ item.description }}</li>
+                <li class="biggerLi"><strong>Description:</strong> {{ item.description }}</li>
             </ul>
             <div class="btn-group" role="group" aria-label="buyNcartButtons">
               <button class="btn btn-success" id="buyButton" (click)="checkout()">Buy</button>
@@ -137,5 +148,5 @@
     <app-pagination [page]="page" (pageChange)="getPage($event)"></app-pagination>
   </div>
     </div>
-  
 </app-panel>
+</div>

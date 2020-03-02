@@ -17,8 +17,6 @@
       </thead>
       <tbody>
         <tr *ngFor="let item of page?.items">
-
-
           <td>
             <ng-template #popContent><img class="img-fluid img-thumbnail" [src]="item.imgSource"/></ng-template>
             <label [ngbPopover]="popContent" triggers="mouseenter:mouseleave" popoverTitle="{{item.name}}">
@@ -33,10 +31,12 @@
               <i class="far fa-trash-alt"></i>
               {{ 'app.REMOVE' | translate }}
             </button>
+            <div class="d-md-inline ml-md-1 d-sm-block">
             <a [routerLink]="['./', item.id, 'edit']" class="btn btn-info">
               <i class="fas fa-pencil-alt"></i>
               {{ 'app.EDIT' | translate }}
             </a>
+            </div>
           </td>
         </tr>
       </tbody>
