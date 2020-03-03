@@ -1,3 +1,5 @@
+import { Product } from './products.model';
+
 export interface ProductDetail {
   id?:string;
   productId:string;
@@ -5,4 +7,5 @@ export interface ProductDetail {
     price:number;
     availability:number;
     status?: number;
+    product?:Product;
   }

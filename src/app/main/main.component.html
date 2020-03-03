@@ -72,10 +72,15 @@
     </li>
 
 
-    <li class="nav-item">
+    <li *ngIf="Logged" class="nav-item">
       <button class="btn btn-link nav-link" (click)="logOut()">
         <i class="fas fa-sign-out-alt"></i>
         {{ 'app.LOG_OUT' | translate }}</button>
+    </li>
+    <li *ngIf="!Logged" class="nav-item">
+      <button class="btn btn-link nav-link" [routerLink]="['/auth/login']">
+        <i class="fas fas fa-sign-in-alt"></i>
+        {{ 'app.LOG_IN' | translate }}</button>
     </li>
     
   </ul>

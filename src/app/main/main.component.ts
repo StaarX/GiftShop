@@ -13,6 +13,7 @@ export class MainComponent{
   dropdownState=false;
   public cartItems=[];
   selectedQty=[];
+  Logged=false;
 
   navItems: NavItem[] = [
     {name:'Products',route:['/products']},
@@ -20,9 +21,14 @@ export class MainComponent{
   ];
 
   constructor(private _authService: AuthService,private readonly _router: Router) { 
-    if(this._router.url=='/'){
-      this._router.navigateByUrl("/shop");
-    }
+    this.isLogged();
+  }
+
+  isLogged(){
+    this._authService.isAuthenticated().toPromise().then(res => {   
+    this.Logged=res;
+    console.log(res);
+    });
   }
 
   logOut() {

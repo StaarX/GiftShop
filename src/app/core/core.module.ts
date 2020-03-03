@@ -21,6 +21,7 @@ import { MessageBoxService, ModalMessageComponent, ModalConfirmComponent } from 
 import { DownloadService } from './services/download.service';
 import { ConfigService } from './services/config.service';
 import { LoadingService } from './services/loading.service';
+import { AuthGuardAdmin } from './guards/auth.guard.admin';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -70,6 +71,7 @@ const entryComponents: any[] = [
     AuthService,
     AuthState,
     AuthGuard,
+    AuthGuardAdmin,
     MessageBoxService,
     DownloadService,
     ConfigService,

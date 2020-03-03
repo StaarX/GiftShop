@@ -54,11 +54,11 @@
     </div>
     <!-- Modal body -->
     <div class="modal-body">
-        <div class="text-center pointable" [routerLink]="['./', modalInfo.id, 'detailed']" (click)="modal.dismiss('Detailed')"><h5>{{modalInfo.name}}</h5>
+        <div class="text-center pointable" [routerLink]="['./', modalInfo?.id, 'detailed']" (click)="modal.dismiss('Detailed')"><h5>{{modalInfo?.name}}</h5>
         </div>
         <hr>
         <div class="mb-2 fixImage">
-          <img class="img-thumbnail" [src]="modalInfo.imgSource"/>
+          <img class="img-thumbnail" [src]="modalInfo?.imgSource"/>
         </div>
         <hr>
         <div id="infoContainer">
@@ -66,7 +66,7 @@
             <h6 class="col-3">
               Description: 
             </h6>
-            <div class="col-9 text-left">{{modalInfo.description}}</div>
+            <div class="col-9 text-left">{{modalInfo?.description}}</div>
           </div>
 
           <div class="row">

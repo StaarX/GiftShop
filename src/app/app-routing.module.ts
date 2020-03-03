@@ -3,8 +3,8 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { LayoutComponent } from './shared/components/layout/layout.component';
 import { ErrorComponent } from './error/error.component';
-import { AuthGuard } from './core/guards/auth.guard';
 import { MainComponent } from './main/main.component';
+import { AuthGuardAdmin } from './core/guards/auth.guard.admin';
 
 const routes: Routes = [
   {
@@ -22,7 +22,7 @@ const routes: Routes = [
       {
         path: 'products',
         component: LayoutComponent,
-        canActivate: [AuthGuard],
+        canActivate: [AuthGuardAdmin],
         loadChildren: './components/products/products.module#ProductsModule',
         data: {
           title: 'Products'
@@ -30,7 +30,7 @@ const routes: Routes = [
       },
 
       {
-        path: 'shop',
+        path: '',
         component: LayoutComponent,
         loadChildren: './components/shop/shop.module#ShopModule',
         data: {
