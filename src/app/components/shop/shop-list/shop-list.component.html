@@ -14,7 +14,7 @@
     [(ngModel)]="currentTerm"
   />
   <div class="input-group-append">
-    <button type="button" class="btn btn-secondary" (click)="filterIt()">{{ 'shop.SEARCH' | translate }}</button>
+    <button type="button" class="btn btn-secondary" (click)="filterIt()"><i class="fas fa-search"></i> {{ 'shop.SEARCH' | translate }}</button>
   </div>
   </div>
 
@@ -54,7 +54,7 @@
     </div>
     <!-- Modal body -->
     <div class="modal-body">
-        <div class="text-center pointable" [routerLink]="['./', modalInfo?.id, 'detailed']" (click)="modal.dismiss('Detailed')"><h5>{{modalInfo?.name}}</h5>
+        <div class="text-center pointable" [routerLink]="['./', modalInfo?.id, 'detailed']" (click)="modal.dismiss('Detailed')"><h5>{{modalInfo?.name | limitTo:35}}</h5>
         </div>
         <hr>
         <div class="mb-2 fixImage">
@@ -118,8 +118,8 @@
     </div>
     <!-- Modal Footer -->
     <div class="modal-footer">
-      <button type="button" class="btn btn-danger" (click)="modal.dismiss('Close button')">Close</button>
-      <button type="button" class="btn btn-success" [disabled]="disabledSaveButton()" (click)="modal.close()">Save</button>
+      <button type="button" class="btn btn-danger" (click)="modal.dismiss('Close button')"><i class="far fa-window-close"></i> Close</button>
+      <button type="button" class="btn btn-success" [disabled]="disabledSaveButton()" (click)="modal.close()"><i class="fas fa-cart-plus"></i> Save</button>
     </div>
     
   </ng-template>
@@ -127,21 +127,21 @@
   
 
   <div class="row mx-1 justify-content-center">
-    <div class="col-lg-3 col-md-6 col-sm-5 center card-deck" *ngFor="let item of page?.items">
+    <div class="col-lg-3 col-md-4 col-sm-6 center card-deck" *ngFor="let item of page?.items">
         <div class="card bg-light p-1 m-1">
             <div class="fixImage">
               <img [src]="item.imgSource" class="img-thumbnail"  [alt]="item.name"/>
             </div>
             <div class="card-body">
             <ul class="card-text">
-                <li><strong>Name:</strong> {{ item.name}}</li>
-                <li class="biggerLi"><strong>Description:</strong> {{ item.description }}</li>
+                <li><strong>Name:</strong> {{ item.name | limitTo:40}}</li>
+                <li><strong>Description:</strong> {{ item.description }}</li>
             </ul>
           </div>
             <div class="card-footer justify-content-center">
               <div class="card">
             <div class="btn-group" role="group">
-              <button class="btn btn-success" id="buyButton" (click)="buyOneItem(item)">Buy</button>
+              <button class="btn btn-success" id="buyButton" (click)="buyOneItem(item)"><i class="fas fa-location-arrow"></i> Buy</button>
               <button class="btn btn-primary" id="addCart" (click)="openModal(content,item.id)"><i class="fas fa-cart-plus"></i> Add to Cart</button>
             </div>
           </div>

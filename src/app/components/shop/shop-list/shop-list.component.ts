@@ -131,6 +131,10 @@ this.registerRequest(this._shopService.get(productId)).toPromise().then(queryRes
 }).catch(errorResponse => this._errorHandler.handle(errorResponse));
 }
 
+private getToPromise(productId: string) {
+  return this.registerRequest(this._shopService.get(productId)).toPromise();
+}
+
   addToCart(cartitem:CartItem){
     this._cartService.saveCartItem(cartitem).toPromise().then(res=>{
       localStorage.clear();
@@ -138,76 +142,80 @@ this.registerRequest(this._shopService.get(productId)).toPromise().then(queryRes
   }
 
   openModal(content,id:string) {
-      this.get(id);
-    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title',centered:true}).result.then((result) => {
-      if (this.modalInfo.productDetails.length>0&&this.selectedType!=undefined&&this.selectedQty!=undefined) {
-        //DTO declaration
-      let cart:CartItem={
-        userid:'',
-        quantity:0,
-        unitPrice:this.selectedType.price,
-        productDetail:{
-          id:this.selectedType.id,
-          productId:this.modalInfo.id,
-          type:this.selectedType.type,
-          price:this.selectedType.price,
-          availability:this.selectedType.availability,
-          product:{
-            id:this.modalInfo.id,
-            name:this.modalInfo.name,
-            description:this.modalInfo.description,
-            imgSource:this.modalInfo.imgSource
-          }
-        }
-  };
-        if (this.foundSameItem) {
-         if (this.checkAvailabilityxQtyDesired()) {
-            if (this.autenticated) {
-              //Values that change
-                cart.userid=this.userInfo.id
-                cart.quantity=this.previousQty+this.selectedQty;
-             localStorage.setItem("CartI:"+this.selectedType.id,JSON.stringify(cart));
-             this.addToCart(cart);
+      this.getToPromise(id).then(queryResult=>{
+        this.modalInfo=queryResult;
+        this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title',centered:true}).result.then((result) => {
+          if (this.modalInfo.productDetails.length>0&&this.selectedType!=undefined&&this.selectedQty!=undefined) {
+            //DTO declaration
+          let cart:CartItem={
+            userid:'',
+            quantity:0,
+            unitPrice:this.selectedType.price,
+            productDetail:{
+              id:this.selectedType.id,
+              productId:this.modalInfo.id,
+              type:this.selectedType.type,
+              price:this.selectedType.price,
+              availability:this.selectedType.availability,
+              product:{
+                id:this.modalInfo.id,
+                name:this.modalInfo.name,
+                description:this.modalInfo.description,
+                imgSource:this.modalInfo.imgSource
+              }
+            }
+      };
+            if (this.foundSameItem) {
+             if (this.checkAvailabilityxQtyDesired()) {
+                if (this.autenticated) {
+                  //Values that change
+                    cart.userid=this.userInfo.id
+                    cart.quantity=this.previousQty+this.selectedQty;
+                 localStorage.setItem("CartI:"+this.selectedType.id,JSON.stringify(cart));
+                 this.addToCart(cart);
+                 this.handleAddToCartSuccess('The item was successfully added to the cart');
+                 return;
+                }else{
+                  //Values that change
+                  cart.userid='unregistered'
+                  cart.quantity=this.previousQty+this.selectedQty;
+             localStorage.setItem("CartI:"+this.selectedType.id,JSON.stringify(cart)); 
              this.handleAddToCartSuccess('The item was successfully added to the cart');
              return;
-            }else{
-              //Values that change
-              cart.userid='unregistered'
-              cart.quantity=this.previousQty+this.selectedQty;
-         localStorage.setItem("CartI:"+this.selectedType.id,JSON.stringify(cart)); 
-         this.handleAddToCartSuccess('The item was successfully added to the cart');
-         return;
-            }
-           }else{
-               this.handleAddToCartFailure('The quantity desired is more than the available for the selected Type.');
-               return;
-             } 
-      
-         }
-         //If same item was not found
-             if (this.autenticated) {
-               //Values that cahnge
-              cart.userid=this.userInfo.id
-              cart.quantity=this.selectedQty; 
+                }
+               }else{
+                   this.handleAddToCartFailure('The quantity desired is more than the available for the selected Type.');
+                   return;
+                 } 
+          
+             }
+             //If same item was not found
+                 if (this.autenticated) {
+                   //Values that cahnge
+                  cart.userid=this.userInfo.id
+                  cart.quantity=this.selectedQty; 
+                  localStorage.setItem("CartI:"+this.selectedType.id,JSON.stringify(cart)); 
+                  this.handleAddToCartSuccess('The item was successfully added to the cart');
+                  return;
+                 }else{
+                   //Values that change
+                   cart.userid='unregistered'
+                   cart.quantity=this.previousQty+this.selectedQty;
               localStorage.setItem("CartI:"+this.selectedType.id,JSON.stringify(cart)); 
               this.handleAddToCartSuccess('The item was successfully added to the cart');
               return;
-             }else{
-               //Values that change
-               cart.userid='unregistered'
-               cart.quantity=this.previousQty+this.selectedQty;
-          localStorage.setItem("CartI:"+this.selectedType.id,JSON.stringify(cart)); 
-          this.handleAddToCartSuccess('The item was successfully added to the cart');
-          return;
-             }
-            }else{
-                this.handleAddToCartFailure('The quantity desired is more than the available for the selected Type.');
-                return;
-              } 
-    }, (reason) => {
-      //When dismissed set everything back to default
-      this.modalBackToDefault();
-    });
+                 }
+                }else{
+                    this.handleAddToCartFailure('The quantity desired is more than the available for the selected Type.');
+                    return;
+                  } 
+        }, (reason) => {
+          //When dismissed set everything back to default
+          this.modalBackToDefault();
+        });
+
+      }).catch(errorResponse => this._errorHandler.handle(errorResponse));
+    
   }
 
   private getCategories(){
@@ -299,7 +307,6 @@ this.modalBackToDefault();
    
   }
   typeChanged(){
-    console.log(this.selectedType.type);
     if (this.selectedType.availability<=0) {
       this.selectedQty=undefined;
     }

@@ -5,6 +5,7 @@ import { CartItem } from 'src/app/common/models/cartitem-model';
 import { AuthModel } from 'src/app/common/models/auth.model';
 import { CartService } from 'src/app/core/services/cart.service';
 import { Cart } from 'src/app/common/models/cart-model';
+import { NotificationService } from 'src/app/core/services/notification.service';
 
 
 @Component({
@@ -20,7 +21,8 @@ export class CartComponent implements OnInit{
   disabledCheckout=false;
 
 
-  constructor(private _authService: AuthService,private readonly _router: Router, private _mainService:CartService) { 
+  constructor(private _authService: AuthService,private readonly _router: Router, private _mainService:CartService
+    ,private readonly _notificationService: NotificationService) { 
     this.ngOnInit();
   }
 
@@ -30,10 +32,9 @@ export class CartComponent implements OnInit{
       if (res) {
         this._authService.getAuthInfo().toPromise().then(res=>{
           this.userInfo=res;
-    this.loadCart();
         });
       }
-
+    this.loadCart();
     });
   }
 
@@ -43,9 +44,22 @@ export class CartComponent implements OnInit{
     this._router.navigateByUrl("/")
   }
   loadCart(){    
+    this.cartItems=[];
+    var aux:CartItem[]=[];
+    if(localStorage.length>0){
+      for (let index = 0; index < localStorage.length; index++) {
+      let key= localStorage.key(index);
+      let value= localStorage.getItem(key);
+      
+      if (key.includes("CartI:")&&value.trim()!='') {
+        let parsedValue=JSON.parse(value);
+        parsedValue.key=key;
+        aux.push(parsedValue);
+      }
+     }
+    } 
     //Case user is logged 
     if (this.Logged) {
-      console.log(this.userInfo.id);
       this._mainService.getCartByUser(this.userInfo.id).subscribe(res=>{
       //If there is not a item in the local storage then the dbcart is assigned
         if(aux.length<1){
@@ -66,23 +80,6 @@ export class CartComponent implements OnInit{
     }else{
       this.cartItems=aux;
     }
-    
-    this.cartItems=[];
-    var aux:CartItem[]=[];
-    if(localStorage.length>0){
-      for (let index = 0; index < localStorage.length; index++) {
-      let key= localStorage.key(index);
-      let value= localStorage.getItem(key);
-      
-      if (key.includes("CartI:")&&value.trim()!='') {
-        let parsedValue=JSON.parse(value);
-        parsedValue.key=key;
-        aux.push(parsedValue);
-
-        console.log(parsedValue);
-      }
-     }
-    } 
   }
 
   deleteItemFromCart(thing:any){
@@ -97,6 +94,15 @@ export class CartComponent implements OnInit{
     }
     this.loadCart();
   }
+
+checkout(){
+  if (this.Logged) {
+    this._router.navigate(['summary']);
+  }else{
+     this._router.navigate(['summary']);
+     this._notificationService.info('You must be logged in order to buy an item');
+    }
+}
 
   calculateTotal(){
     var total=0;
@@ -119,7 +125,6 @@ export class CartComponent implements OnInit{
     }
     
     qtyChanged(item:any,position:number){
-      console.log(this.cartItems[position]); 
       this.cartItems[position].quantity=this.selectedQty[position];
 
       if(localStorage.length>0){
@@ -134,9 +139,7 @@ export class CartComponent implements OnInit{
     } 
 }
 
-console.log('Before logged')
 if (this.Logged) {
-  console.log('Inside logged')
   this.disabledCheckout=true;
   this.cartItems[position].userId=this.userInfo.id;
    this._mainService.updateQty(this.cartItems[position]).subscribe(res=>this.disabledCheckout=false);

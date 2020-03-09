@@ -12,6 +12,15 @@
           </div>
           <hr>
         </div>
+        <div *ngIf="cartItems?.length < 0 || cartItems?.length==0">
+          <hr>
+          <div class="row">
+          <div class="col-md-2 col-3 text-right">-----</div>
+            <div class="col-md-8 col-6 text-center">Your cart is currently empty</div>
+            <div class="col-md-2 col-3">-----</div>
+          </div>
+          <hr>
+        </div>
         <div class="row">
           <div class="col-6 text-center"><strong>Total:</strong></div>
           <div class="col-6 text-center">{{calculateTotal() | number:'1.2-2'}}</div>

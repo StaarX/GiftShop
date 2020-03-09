@@ -86,7 +86,6 @@ export class ShopProductDetailedComponent extends ComponentBase
     this.registerRequest(this._shopService.get(productId)).subscribe({
       next:queryResult =>{
         this.productInfo=queryResult;
-      console.log(this.productInfo);
     },
       error: errorResponse => this._errorHandler.handle(errorResponse),
     });
@@ -211,7 +210,6 @@ addItToCart(cartitem:CartItem){
   }
 
   typeChanged(){
-    console.log(this.selectedType.type);
     if (this.selectedType.availability<=0) {
       this.selectedQty=undefined;
     }

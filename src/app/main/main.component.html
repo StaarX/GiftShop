@@ -1,6 +1,6 @@
 <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow navbar-expand-md">
   <li class="navbar-brand fixAppName col-sm-3 col-md-2 mr-0 text-center" ngbDropdown display="dynamic">
-    <a ngbDropdownToggle class="pointable" role="button">{{ 'app.NAME' | translate }}</a>
+    <a ngbDropdownToggle class="pointable" role="button"><i class="fas fa-gift"></i> {{ 'app.NAME' | translate }}</a>
     <div ngbDropdownMenu>
       <div *ngFor="let item of publicItems">
        <a ngbDropdownItem class="nav-link" [routerLink]="item.route">{{item.name | translate}}</a>
@@ -19,7 +19,7 @@
   <!-- <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search"> -->
   <ul class="navbar-nav px-3 ml-auto">
     <!--Start of the dropdown-->
-    <li *ngIf="_router.url!='/cart' && _router.url!='/summary'" class="nav-item d-md-block d-none fixNavItem" ngbDropdown (openChange)="loadCart()"  #myDrop="ngbDropdown">
+    <li *ngIf="evaluateCartHiddenStatus()" class="nav-item d-md-block d-none fixNavItem" ngbDropdown (openChange)="loadCart()"  #myDrop="ngbDropdown">
 
       <a class="nav-link pointable"ngbDropdownToggle id="navbarDropdown1" role="button">
         <i class="fas fa-shopping-cart"></i>
@@ -78,7 +78,7 @@
    </div>
     </li>
 <!--End of the dropdown-->
-    <li class="nav-item d-md-none d-lg-none d-xl-none fixNavItem">
+    <li *ngIf="evaluateCartHiddenStatus()" class="nav-item d-md-none d-lg-none d-xl-none fixNavItem">
       <a class="nav-link" style="cursor: pointer" role="button" [routerLink]="['/cart']" >
         <i class="fas fa-shopping-cart"></i>
         Cart

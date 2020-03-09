@@ -33,6 +33,9 @@ export class MainComponent implements OnInit{
   role;
   disabledCheckout=false;
 
+  cartHiddenOn : string[]=['summary',
+                            'products',
+                            'cart'];
   navItems: NavItem[] = [
   ];
   publicItems:NavItem[]=[
@@ -54,11 +57,19 @@ export class MainComponent implements OnInit{
         this._authService.getAuthInfo().toPromise().then(res=>{
           this.userInfo=res;
           this.role=res.roles[0];
-          console.log(this.role);
         });
       }
 
     });
+  }
+
+  evaluateCartHiddenStatus(){
+    for (let index = 0; index < this.cartHiddenOn.length; index++) {
+      if (this._router.url.includes(this.cartHiddenOn[index])){
+        return false;
+      }
+    }
+    return true;
   }
 
   logOut() {
@@ -95,13 +106,11 @@ export class MainComponent implements OnInit{
         parsedValue.key=key;
         aux.push(parsedValue);
 
-        console.log(parsedValue);
       }
      }
     }
     //Case user is logged 
     if (this.Logged) {
-      console.log(this.userInfo.id);
       this._mainService.getCartByUser(this.userInfo.id).subscribe(res=>{
       //If there is not a item in the local storage then the dbcart is assigned
         if(aux.length<1){
@@ -140,7 +149,6 @@ this._messageBox.confirm('Are you sure you wan to remove this item?').subscribe(
     if (this.Logged) {
       this._mainService.delete(this.cartItems[position].cartID,this.cartItems[position].productDetail.id).subscribe(res=>
         {
-          console.log(res);
           this.loadCart();
         });
       return;
@@ -179,7 +187,6 @@ this._messageBox.confirm('Are you sure you wan to remove this item?').subscribe(
     }
     
     qtyChanged(item:any,position:number){
-      console.log(this.cartItems[position]); 
       this.cartItems[position].quantity=this.selectedQty[position];
 
       if(localStorage.length>0){
@@ -194,9 +201,7 @@ this._messageBox.confirm('Are you sure you wan to remove this item?').subscribe(
     } 
 }
 
-console.log('Before logged')
 if (this.Logged) {
-  console.log('Inside logged')
   this.disabledCheckout=true;
   this.cartItems[position].userId=this.userInfo.id;
    this._mainService.updateQty(this.cartItems[position]).subscribe(res=>this.disabledCheckout=false);

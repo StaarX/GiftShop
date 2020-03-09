@@ -64,7 +64,6 @@ export class ProductsEditComponent extends ComponentBase implements OnInit {
   ) {
     super();
     this.getCategories();
-    console.log("Categories called");
 
     this.formDetails = fb.group({
       type:['',[Validators.required, Validators.maxLength(100), Validators.pattern(Regex.Letters)]],

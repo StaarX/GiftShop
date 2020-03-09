@@ -45,9 +45,9 @@ export class SummaryComponent implements OnInit{
       if (res) {
         this._authService.getAuthInfo().toPromise().then(res=>{
           this.userInfo=res;
-          this.loadCart();
         });
       }
+      this.loadCart();
     });
 
   }
@@ -57,10 +57,24 @@ export class SummaryComponent implements OnInit{
   goBack(){
     this._router.navigateByUrl("/")
   }
-  loadCart(){    
+  loadCart(){
+    this.cartItems=[];
+    var aux:CartItem[]=[];
+    if(localStorage.length>0){
+      for (let index = 0; index < localStorage.length; index++) {
+      let key= localStorage.key(index);
+      let value= localStorage.getItem(key);
+      
+      if (key.includes("CartI:")&&value.trim()!='') {
+        let parsedValue=JSON.parse(value);
+        parsedValue.key=key;
+        aux.push(parsedValue);
+      }
+     }
+    }
+            
     //Case user is logged 
     if (this.Logged) {
-      console.log(this.userInfo.id);
       this._mainService.getCartByUser(this.userInfo.id).subscribe(res=>{
       //If there is not a item in the local storage then the dbcart is assigned
         if(aux.length<1){
@@ -81,23 +95,6 @@ export class SummaryComponent implements OnInit{
     }else{
       this.cartItems=aux;
     }
-    
-    this.cartItems=[];
-    var aux:CartItem[]=[];
-    if(localStorage.length>0){
-      for (let index = 0; index < localStorage.length; index++) {
-      let key= localStorage.key(index);
-      let value= localStorage.getItem(key);
-      
-      if (key.includes("CartI:")&&value.trim()!='') {
-        let parsedValue=JSON.parse(value);
-        parsedValue.key=key;
-        aux.push(parsedValue);
-
-        console.log(parsedValue);
-      }
-     }
-    } 
   }
 
   calculateTotal(){

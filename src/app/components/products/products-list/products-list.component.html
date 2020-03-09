@@ -29,14 +29,14 @@
           <td class="table-actions">
             <button type="button" class="btn btn-danger" (click)="delete(item)">
               <i class="far fa-trash-alt"></i>
-              <a class="d-md-inline d-none">
+              <a class="d-lg-inline d-none">
               {{ 'app.REMOVE' | translate }}
             </a>
             </button>
             <div class="d-inline ml-md-1">
             <a [routerLink]="['./', item.id, 'edit']" class="btn btn-info">
               <i class="fas fa-pencil-alt"></i>
-              <a class="d-md-inline d-none">
+              <a class="d-lg-inline d-none">
                 {{ 'app.EDIT' | translate }}</a>
             </a>
             </div>
