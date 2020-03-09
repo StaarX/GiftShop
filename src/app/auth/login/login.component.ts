@@ -68,7 +68,7 @@ export class LoginComponent {
         switch (result.status) {
           case LoginStatus.Success:
             setTimeout(() => {
-              this.navigate();
+              this.toHome();
             }, 10);
             break;
           case LoginStatus.IsLockedOut:
@@ -107,5 +107,9 @@ export class LoginComponent {
 
   private navigate() {
     this._redirectService.fromRoute(this._route.snapshot);
+  }
+
+  private toHome(){
+    this._redirectService.toHome();
   }
 }

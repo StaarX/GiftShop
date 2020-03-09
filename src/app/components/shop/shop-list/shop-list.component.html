@@ -1,10 +1,10 @@
-<div class="py-md-3">
-  <h2 class="text-center">Gift Shop</h2> 
+<div class="mt-3 pageCard">
+  <h2 class="text-center lightFont">Gift Shop</h2> 
 
 <app-panel [loading]="loading">
-<div class="row">
-<div class="col-sm-12 col-md-7">
-  <h5 class="text-center">Search by name</h5>
+<div class="row mx-2">
+<div class="col-sm-12 col-md-5 col-lg-7">
+  <h5 class="text-center lightFont">{{ 'shop.SEARCHLABEL' | translate }}</h5>
 
   <div class="input-group">
     <input
@@ -19,15 +19,15 @@
   </div>
 
 </div>
-<div class="col-sm-12 col-md-3">
-  <h5 class="text-center">Filter by category</h5>
+<div class="col-sm-12 col-md-3 col-lg-2">
+  <h5 class="text-center lightFont">{{ 'shop.CATEGORYLABEL' | translate }}</h5>
   <select [ngModelOptions]="{standalone: true}" [(ngModel)]="selectedCategorytoSort" class="form-control" id="sortByCategory" (change)="filterIt()">
     <option [ngValue]="undefined" selected>None</option>
     <option *ngFor="let item of categories?.items" [ngValue]="item">{{item.name}}</option>
   </select>
 </div>
-<div class="col-sm-12 col-md-2">
-  <h5 class="text-center">Items per page</h5>
+<div class="col-sm-12 col-md-4 col-lg-3">
+  <h5 class="text-center lightFont">{{ 'shop.PAGESLABEL' | translate }}</h5>
   <select [ngModelOptions]="{standalone: true}" [(ngModel)]="pageSize" class="form-control" id="pageItems" (change)="updatePage()">
     <option [ngValue]="undefined" selected disabled>Default</option>
     <option [ngValue]="1">1</option>
@@ -58,7 +58,7 @@
         </div>
         <hr>
         <div class="mb-2 fixImage">
-          <img class="img-thumbnail" [src]="modalInfo?.imgSource"/>
+          <img class="img-thumbnail" src="{{modalInfo?.imgSource}}"/>
         </div>
         <hr>
         <div id="infoContainer">
@@ -109,7 +109,7 @@
                   </div>  
                 </div>
 
-                <select [ngModelOptions]="{standalone: true}" [(ngModel)]="selectedQty" class="form-control" id="categoriesSelect" (change)="qtyChanged()">
+                <select [ngModelOptions]="{standalone: true}" [(ngModel)]="selectedQty" class="form-control" id="categoriesSelect">
                   <option [ngValue]="undefined" [selected]='selected' disabled>Select an amount</option>
                   <option *ngFor="let item of availabilityToArray(); let i = index" [ngValue]="i+1">{{i+1}}</option>
               </select>
@@ -119,26 +119,32 @@
     <!-- Modal Footer -->
     <div class="modal-footer">
       <button type="button" class="btn btn-danger" (click)="modal.dismiss('Close button')">Close</button>
-      <button type="button" class="btn btn-success" [disabled]="disabledSaveButton" (click)="modal.close()">Save</button>
+      <button type="button" class="btn btn-success" [disabled]="disabledSaveButton()" (click)="modal.close()">Save</button>
     </div>
     
   </ng-template>
   <!-- Modal end -->
   
 
-  <div class="row">
-    <div class="col-lg-3 col-md-4 col-sm-5 center" *ngFor="let item of page?.items">
+  <div class="row mx-1 justify-content-center">
+    <div class="col-lg-3 col-md-6 col-sm-5 center card-deck" *ngFor="let item of page?.items">
         <div class="card bg-light p-1 m-1">
             <div class="fixImage">
-              <img [src]="item.imgSource" class="img-fluid img-thumbnail"  [alt]="item.name"/>
+              <img [src]="item.imgSource" class="img-thumbnail"  [alt]="item.name"/>
             </div>
-            <ul>
+            <div class="card-body">
+            <ul class="card-text">
                 <li><strong>Name:</strong> {{ item.name}}</li>
                 <li class="biggerLi"><strong>Description:</strong> {{ item.description }}</li>
             </ul>
-            <div class="btn-group" role="group" aria-label="buyNcartButtons">
-              <button class="btn btn-success" id="buyButton" (click)="checkout()">Buy</button>
+          </div>
+            <div class="card-footer justify-content-center">
+              <div class="card">
+            <div class="btn-group" role="group">
+              <button class="btn btn-success" id="buyButton" (click)="buyOneItem(item)">Buy</button>
               <button class="btn btn-primary" id="addCart" (click)="openModal(content,item.id)"><i class="fas fa-cart-plus"></i> Add to Cart</button>
+            </div>
+          </div>
             </div>
         </div>
     </div>

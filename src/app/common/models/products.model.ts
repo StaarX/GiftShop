@@ -6,7 +6,7 @@ export interface Product {
     name: string;
     description: string;
     imgSource:string;
-    status: number;
-    categories: Category[];
-    productDetails:ProductDetail[];
+    status?: number;
+    categories?: Category[];
+    productDetails?:ProductDetail[];
   }

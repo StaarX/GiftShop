@@ -1,14 +1,14 @@
-<div class="py-md-3 align-content-center">
-  <app-panel [loading]="loading">
-    <h2 class="text-center" *ngIf="this.addMode">Add a new Product</h2>
-    <h2 class="text-center" *ngIf="this.editMode">Edit a existing Product</h2>
+<div class="py-md-3 align-content-center mt-3 pageCard">
+  <app-panel class="mx-2" [loading]="loading">
+    <h2 class="text-center lightFont" *ngIf="this.addMode">Add a new Product</h2>
+    <h2 class="text-center lightFont" *ngIf="this.editMode">Edit a existing Product</h2>
     <br/>   
    
     <form class=""(ngSubmit)="doSubmit()" [formGroup]="form" autocomplete="off">
       <div class="row">
         <div class="col-md">
           <div class="row form-group">
-            <label for="name" class="col-md-4 col-form-label required text-lg-right">{{
+            <label for="name" class="col-md-4 col-form-label required text-lg-right lightFont">{{
               'products.NAME' | translate
             }}</label>
 
@@ -62,7 +62,7 @@
           </div>
 
           <div class="row form-group">
-            <label for="description" class="col-md-4 col-form-label required text-lg-right">{{
+            <label for="description" class="col-md-4 col-form-label required text-lg-right lightFont">{{
               'products.DESC' | translate
             }}</label>
 
@@ -110,7 +110,7 @@
           </div>
           
           <div class="row form-group" style="margin-bottom:170px">
-            <label for="imgSource" class="col-md-4 col-form-label required text-lg-right">{{
+            <label for="imgSource" class="col-md-4 col-form-label required text-lg-right lightFont">{{
               'products.IMGSOURCE' | translate
             }}</label>
 
@@ -145,7 +145,7 @@
                 </p>
               </span>
                 <div class="card-img center square">
-                  <img [src]="imageUrl" class="img-thumbnail"> 
+                  <img src="{{imageUrl}}" class="img-thumbnail"> 
                 </div>
                 <input
                   type="hidden"
@@ -160,7 +160,7 @@
           </div>
            
           <div class="row form-group">
-            <label for="categoriesSelect" class="col-md-4 col-form-label text-lg-right">Categories</label>
+            <label for="categoriesSelect" class="col-md-4 col-form-label text-lg-right lightFont">Categories</label>
             <div class="col-md-6">
             <div class="input-group">
               <select [ngModelOptions]="{standalone: true}" [(ngModel)]="selectedCategory" class="custom-select" id="categoriesSelect">
@@ -182,11 +182,35 @@
       <div class="row form-group">
         <div class="col-md">
       <div class="row form-group">
-        <div class="col-md-10 form-group form-inline card border-0">
-          Search for Categories: <input class="form-control ml-md-2" type="text" [formControl]="filter"/>
       </div>
 
-        <div class="col-md-2 text-right form-actions">
+          <table class="table table-striped">
+            <thead>
+            <tr>
+              <th class="text-center titleFont" scope="col">#</th>
+              <th class="text-center titleFont" scope="col">Name</th>
+              <th class="text-center titleFont" scope="col">Desc</th>
+              <th class="text-center titleFont" scope="col">Delete</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let category of getCats; index as i">
+              <th class="text-center lightFont" scope="row">{{ i + 1 }}</th>
+              <td class="text-center lightFont">
+                <ngb-highlight [result]="category.name" [term]="filter.value"></ngb-highlight>
+              </td>
+              <td class="text-center lightFont"><ngb-highlight [result]="category.description" [term]="filter.value"></ngb-highlight></td>
+              <td class="text-center lightFont"><button type="button" (click)="deleteCategory(category.id)" class="btn btn-danger">Delete</button></td>
+            </tr>
+            </tbody>
+          </table>
+          <div class="row align-items-center">
+            <div class="col-6">
+            <ngb-pagination [collectionSize]="tableSize" [(page)]="page" [pageSize]="pageSize">
+            </ngb-pagination>
+          </div>
+
+        <div class="col-6 form-actions">
           <button type="submit" class="btn btn-primary">
             {{ 'app.SAVE' | translate }}
           </button>
@@ -194,28 +218,7 @@
             'app.CANCEL' | translate
           }}</a>
         </div>
-      </div>
-
-          <table class="table table-striped">
-            <thead>
-            <tr>
-              <th class="text-center" scope="col">#</th>
-              <th class="text-center" scope="col">Name</th>
-              <th class="text-center" scope="col">Desc</th>
-              <th class="text-center" scope="col">Delete</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr *ngFor="let category of product?.categories; index as i">
-              <th class="text-center" scope="row">{{ i + 1 }}</th>
-              <td class="text-center">
-                <ngb-highlight [result]="category.name" [term]="filter.value"></ngb-highlight>
-              </td>
-              <td class="text-center"><ngb-highlight [result]="category.description" [term]="filter.value"></ngb-highlight></td>
-              <td class="text-center"><button type="button" (click)="deleteCategory(category.id)" class="btn btn-danger">Delete</button></td>
-            </tr>
-            </tbody>
-          </table>
+          </div>
       </div>
     </div>
     </form>

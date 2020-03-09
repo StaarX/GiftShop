@@ -21,7 +21,6 @@ const routes: Routes = [
     children: [
       {
         path: 'products',
-        component: LayoutComponent,
         canActivate: [AuthGuardAdmin],
         loadChildren: './components/products/products.module#ProductsModule',
         data: {
@@ -31,7 +30,6 @@ const routes: Routes = [
 
       {
         path: '',
-        component: LayoutComponent,
         loadChildren: './components/shop/shop.module#ShopModule',
         data: {
           title: 'Shop'

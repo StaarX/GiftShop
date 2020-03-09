@@ -21,6 +21,7 @@
     "SUBMIT": "Submit",
     "CLEAR": "Clear",
     "LOG_OUT": "Log Out",
+    "LOG_IN":"Log In",
     "PAGE_INFO": "Showing {{ from }} to {{ to }} of {{ total }}",
     "HOME": "Home",
     "DOWNLOAD": "Download",
@@ -109,5 +110,16 @@
     "EDIT": "Edit Product",
     "DELETE": "Delete Product",
     "CONFIRM_DELETE": "Are you sure you want to delete the Product {{name}}?"
+  },
+  "shop":{
+    "TITLE": "Gift Shop",
+    "ADD": "Add Product",
+    "EDIT": "Edit Product",
+    "DELETE": "Delete Product",
+    "CONFIRM_DELETE": "Are you sure you want to delete the Product {{name}}?",
+    "SEARCHLABEL":"Search by name",
+    "SEARCH":"Search",
+    "CATEGORYLABEL":"Category",
+    "PAGESLABEL":"Items per Page"
   }
 }

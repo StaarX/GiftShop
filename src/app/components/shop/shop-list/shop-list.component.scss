@@ -1,7 +1,4 @@
-img {
-  width: 225px;
-  height:225px;
-  }
+
 .fixImage {
   text-align:center;
 }
@@ -11,5 +8,12 @@ img {
 }
 .biggerLi{
   width: auto;
-  height: 48px;
+  height: 60px;
+}
+.lightFont{
+  color: lightgray;
+}
+.pageCard{
+  border-radius: 0.25rem !important;
+  background-color: rgba(0, 0, 0, 0.62);
 }

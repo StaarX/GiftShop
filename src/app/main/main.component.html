@@ -1,37 +1,52 @@
 <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow navbar-expand-md">
-  <a class="navbar-brand fixAppName col-sm-3 col-md-2 mr-0 text-center" [routerLink]="['/shop']">{{ 'app.NAME' | translate }}</a>
+  <li class="navbar-brand fixAppName col-sm-3 col-md-2 mr-0 text-center" ngbDropdown display="dynamic">
+    <a ngbDropdownToggle class="pointable" role="button">{{ 'app.NAME' | translate }}</a>
+    <div ngbDropdownMenu>
+      <div *ngFor="let item of publicItems">
+       <a ngbDropdownItem class="nav-link" [routerLink]="item.route">{{item.name | translate}}</a>
+      </div>
+      <div *ngIf="role=='Admin'">
+        <div *ngFor="let item of adminItems">
+          <a ngbDropdownItem class="nav-link" [routerLink]="item.route">{{item.name | translate}}</a>
+        </div>
+      </div>
 
-    <app-title class="navbar-text ml-auto fixTitle"></app-title>
+    </div>
+  </li>
+
+    <app-title class="navbar-text ml-auto"></app-title>
     
   <!-- <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search"> -->
   <ul class="navbar-nav px-3 ml-auto">
     <!--Start of the dropdown-->
-    <li class="nav-item d-md-block d-none fixNavItem" ngbDropdown (openChange)="loadCart()"  #myDrop="ngbDropdown">
+    <li *ngIf="_router.url!='/cart' && _router.url!='/summary'" class="nav-item d-md-block d-none fixNavItem" ngbDropdown (openChange)="loadCart()"  #myDrop="ngbDropdown">
 
       <a class="nav-link pointable"ngbDropdownToggle id="navbarDropdown1" role="button">
         <i class="fas fa-shopping-cart"></i>
         Cart
-      </a>
-
+      </a> 
       <div ngbDropdownMenu class="dropdown-menu dropdown-menu-right overflow-auto">
+        
+        
         <div class="divform">
-        <h4 class="text-center pointable" [routerLink]="['/shop/cart']" (click)="$event.stopPropagation(); myDrop.close();">Cart</h4>
+        <h4 class="text-center pointable" [routerLink]="['/cart']" (click)="$event.stopPropagation(); myDrop.close();">Cart</h4>
         <hr>
+        <app-panel [loading]="loading"> 
         <div class="container">
         <div *ngFor="let item of cartItems; let ii = index">
           <div class="row">
           <div class="col-3 card">
-            <img [src]="item.imgSource">
+            <img [src]="item.productDetail.product.imgSource">
             </div> 
            <div class="col-7 card">
-            <div>Name: {{item.name}} </div>
-            <div>Type: {{item.productDetail.type}}</div>
+            <div>Name: {{item.productDetail.product.name | limitTo:20}} </div>
+            <div>Type: {{item.productDetail.type | limitTo:20}}</div>
             <div class="input-group">
               <div>
               Quantity: 
             </div>
-                <select  class="form-control-sm" [ngModelOptions]="{standalone: true}" [(ngModel)]="selectedQty[ii]" id="categoriesSelect" (change)="qtyChanged(item,ii)">
-                  <option [ngValue]="undefined" [selected]='selected' disabled>{{item.qty}}</option>
+                <select  class="form-control-sm" [ngModelOptions]="{standalone: true}" [(ngModel)]="selectedQty[ii]" id="categoriesSelect" (change)="qtyChanged(item,ii)" [disabled]="summaryDisabled">
+                  <option [ngValue]="undefined" [selected]='selected' disabled>{{item.quantity}}</option>
                   <option *ngFor="let itm of availabilityToArray(item.productDetail.availability); let i = index" [ngValue]="i+1" selected>{{i+1}}</option>
                 </select>
               
@@ -39,9 +54,9 @@
                each {{item.productDetail.price}}
               </div>
               </div>
-            <div>Total: {{item.qty*item.productDetail.price | number:'1.2-2'}}</div>
+            <div>Total: {{item.quantity*item.productDetail.price | number:'1.2-2'}}</div>
             </div>
-            <button class="btn col-2 text-center btn-danger" (click)="deleteItemFromCart(item)">
+            <button class="btn col-2 text-center btn-danger" (click)="deleteItemFromCart(item,ii)"[disabled]="summaryDisabled">
               <i class="fas fa-trash"></i>
             </button>
           </div>
@@ -54,18 +69,17 @@
         <hr>
         <div class="row card">
       <div class="btn-group" role="group">
-        <button class="btn btn-warning" (click)="$event.stopPropagation(); myDrop.close();">Close cart</button>
-        <button class="btn btn-success">Check out</button>
+        <button class="btn btn-success" [disabled]="disabledCheckout" (click)="checkout() && $event.stopPropagation(); myDrop.close();">Check out</button>
       </div>
     </div>
       </div>
+    </app-panel> 
       </div>
-
    </div>
     </li>
 <!--End of the dropdown-->
     <li class="nav-item d-md-none d-lg-none d-xl-none fixNavItem">
-      <a class="nav-link" style="cursor: pointer" role="button" [routerLink]="['/shop/cart']" >
+      <a class="nav-link" style="cursor: pointer" role="button" [routerLink]="['/cart']" >
         <i class="fas fa-shopping-cart"></i>
         Cart
       </a>
@@ -75,10 +89,10 @@
     <li *ngIf="Logged" class="nav-item">
       <button class="btn btn-link nav-link" (click)="logOut()">
         <i class="fas fa-sign-out-alt"></i>
-        {{ 'app.LOG_OUT' | translate }}</button>
+        <a class="d-md-inline-block d-none">{{ ' Logged as '+userInfo.name }}</a></button>
     </li>
     <li *ngIf="!Logged" class="nav-item">
-      <button class="btn btn-link nav-link" [routerLink]="['/auth/login']">
+      <button class="btn btn-link nav-link " [routerLink]="['/auth/login']">
         <i class="fas fas fa-sign-in-alt"></i>
         {{ 'app.LOG_IN' | translate }}</button>
     </li>
@@ -88,22 +102,7 @@
 
 <div class="container-fluid">
   <div class="row">
-    <nav class="col-md-2 d-none d-md-block bg-light sidebar">
-      <div class="sidebar-sticky">
-        <ul class="nav flex-column">
-          <li class="nav-item" *ngFor="let item of navItems">
-            <a class="nav-link" [routerLink]="item.route" [routerLinkActive]="['active']">
-              {{ item.name | translate }} <span class="sr-only">(current)</span>
-            </a>
-          </li>
-        </ul>
-        <div class="version">
-          <app-version></app-version>
-        </div>
-      </div>
-    </nav>
-
-    <main class="col-md-9 ml-sm-auto col-lg-10 px-md-4 pt-md-6 pt-sm-5 pt-xs-50px">
+    <main class="col-md-9 mx-auto col-lg-10 px-md-4 pt-md-6 pt-sm-5 pt-xs-50px">
       <router-outlet></router-outlet>
     </main>
   </div>

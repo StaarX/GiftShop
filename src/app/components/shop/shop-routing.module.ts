@@ -4,6 +4,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { ShopListComponent } from './shop-list/shop-list.component';
 import { CartComponent } from './cart/cart.component';
 import { ShopProductDetailedComponent } from './shop-product-detailed/shop-product-detailed.component';
+import { SummaryComponent } from './summary/summary.component';
 
 const routes: Routes = [
   {
@@ -18,6 +19,14 @@ const routes: Routes = [
     path: ':id/detailed',
     component: ShopProductDetailedComponent,
   },
+  {
+    path:'summary',
+    component: SummaryComponent,
+  },
+  {
+    path:':id/summary',
+    component: SummaryComponent,
+  }
 ];
 
 @NgModule({

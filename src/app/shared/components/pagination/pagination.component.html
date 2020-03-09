@@ -2,7 +2,7 @@
 <div *ngIf="page">
   <div class="container" *ngIf="page.total; else empty_results">
     <div class="row" [hidden]="page.total === 0">
-      <div class="col-12 text-center">
+      <div class="col-12 text-center lightFont">
       <strong> {{ 'app.PAGE_INFO' | translate: { from: from, to: to, total: page.total } }}</strong>
       </div>
     </div>
@@ -15,5 +15,5 @@
 </div>
 <br/>
 <ng-template #empty_results>
-  <div class="text-muted text-center">{{ 'app.NO_RESULTS' | translate }}</div>
+  <div class="text-muted text-center lightFont">{{ 'app.NO_RESULTS' | translate }}</div>
 </ng-template>

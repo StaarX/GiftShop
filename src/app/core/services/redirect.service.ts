@@ -58,4 +58,7 @@ export class RedirectService {
       this._router.navigate(['/']);
     }
   }
+  toHome(){
+    this._router.navigate(['/']);
+  }
 }

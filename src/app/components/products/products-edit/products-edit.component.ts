@@ -32,7 +32,11 @@ export class ProductsEditComponent extends ComponentBase implements OnInit {
   filter = new FormControl('');
   selectedCategory:any;
   selectedDetail:any;
-  imageUrl: string = "";
+  imageUrl: string = "https://pp2.walk.sc/_/s/_i/images/placeholder-225.jpg";
+  //Table variables
+  page = 1;
+  pageSize = 3;
+  tableSize;
 
   public product:Product= {id:"",
                           name:"",
@@ -74,6 +78,13 @@ export class ProductsEditComponent extends ComponentBase implements OnInit {
       name: ['', [Validators.required, Validators.maxLength(100), Validators.pattern(Regex.Name)],],
       imgSource: ['', [Validators.required,Validators.maxLength(1500000)],]
     });
+  }
+
+  get getCats(): Category[] {
+    this.tableSize=this.product.categories.length;
+    return this.product.categories
+      .map((category, i) => ({id: i + 1, ...category}))
+      .slice((this.page - 1) * this.pageSize, (this.page - 1) * this.pageSize + this.pageSize);
   }
 
   ngOnInit() {

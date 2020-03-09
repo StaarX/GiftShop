@@ -1,0 +1,126 @@
+        <div class="mt-3 card pageCard">
+        <h4 class="text-center mt-2 titleFont">Summary</h4>
+        <hr>
+        <div class="container card">
+        <hr>
+        <div *ngFor="let item of cartItems; let ii = index">
+          <div class="row">
+            <ng-template #popContent><img class="img-fluid img-thumbnail" [src]="item.productDetail.product.imgSource"/></ng-template>
+            <div class="col-md-1 col-2">x{{item.quantity}}</div>
+            <div class="col-md-8 col-6" [ngbPopover]="popContent" triggers="mouseenter:mouseleave:click"  popoverTitle="{{item.productDetail.product.name}}">{{item.productDetail.product.name | limitTo:20}}</div>
+            <div class="col-md-3 col-4">{{item.quantity*item.productDetail.price | number:'1.2-2'}}</div>
+          </div>
+          <hr>
+        </div>
+        <div class="row">
+          <div class="col-6 text-center"><strong>Total:</strong></div>
+          <div class="col-6 text-center">{{calculateTotal() | number:'1.2-2'}}</div>
+        </div>
+        <hr>
+        
+
+    <form class="form-group" [formGroup]="form">
+<!--Credit card number-->
+      <div class="form-row">
+        <div class="col-md-4 col-12 text-center text-md-right col-form-label">
+          <label>Credit Card</label>
+      </div>
+      <div class="col-md-2 col-3">
+        <input
+      class="form-control text-center"
+      id="onecc"
+      type="text"
+      formControlName="onecc"
+      maxlength="4"
+      placeholder="1234"   
+              />
+      </div>
+      <div class="col-md-2 col-3">
+        <input
+      class="form-control text-center"
+      id="twocc"
+      type="text"
+      formControlName="twocc"
+      maxlength="4"
+      placeholder="1234"   
+              />
+      </div>
+      <div class="col-md-2 col-3">
+        <input
+      class="form-control text-center"
+      id="threecc"
+      type="text"
+      formControlName="threecc"
+      maxlength="4"
+      placeholder="1234"   
+              />
+      </div>
+      <div class="col-md-2 col-3">
+        <input
+      class="form-control text-center"
+      id="fourcc"
+      type="text"
+      formControlName="fourcc"
+      maxlength="4"
+      placeholder="1234"   
+              />
+      </div>     
+      </div>
+<!--Expiration date and cvc-->
+      <div class="form-row">
+        <div class="col-md-9 text-md-right text-center col-form-label">
+          <label>Expiration date</label>
+      </div>
+      <div class="col-md-1">
+        <input
+      class="form-control text-center"
+      id="expirationdate"
+      type="text"
+      formControlName="expirationdate"
+      maxlength="5"
+      placeholder="09/20"        
+      />
+      </div>
+      <div class="col-md-1 text-md-right text-center col-form-label">
+        <label>CVC</label>
+      </div>
+      <div class="col-md-1">
+        <input
+      class="form-control text-center"
+      id="cvc"
+      type="text"
+      formControlName="cvc"
+      maxlength="3"
+      placeholder="123"   
+              />
+      </div>  
+      </div>
+      
+      <div class="form-row">
+        <div class="col-12 text-right">
+          <span
+          class="messages"
+          *ngIf="form.invalid"
+        >
+          <p class="text-danger error">
+            Please follow the placeholders of the fields, untils this text vanishes
+          </p>
+        </span> 
+        </div>
+       
+      </div>
+    </form>
+
+        <div class="row card">
+      <div class="btn-group" role="group">
+        <button class="btn btn-warning" (click)="goBack()">Back to the shop</button>
+        <button class="btn btn-success" (click)="buyTheCart()">Pay</button>
+      </div>
+    </div>
+
+      </div>
+
+   </div>
+    
+
+

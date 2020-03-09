@@ -27,7 +27,6 @@ export class AuthGuard implements CanActivate {
             // if (allowedRoles) {
             //   return this.checkRoles(allowedRoles, userRoles);
             // }
-
             return true;
           }
           return false;

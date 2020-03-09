@@ -9,17 +9,20 @@ import { PaginatedRequest } from '../../../common/models/paginated-request.model
 import { PaginatedResult } from '../../../common/models/paginated-result.model';
 import { Product } from '../../../common/models/products.model';
 import { Category } from '../../../common/models/category-model';
+import { CartItem } from 'src/app/common/models/cartitem-model';
 
 @Injectable()
 export class ShopService {
 
   private readonly _url: string;
+  private readonly _cartUrl: string;
 
   constructor(
     private _httpClient: HttpClient,
     @Inject(API_URL) apiUrl: string,
     @Inject(ASSETS_URL) assetsUrl: string) {
     this._url = `${apiUrl}/api/products`;
+    this._cartUrl = `${apiUrl}/api/cart`
   }
 
   getPage(query: PaginatedRequest): Observable<PaginatedResult<Product>> {

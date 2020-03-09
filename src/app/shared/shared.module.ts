@@ -42,6 +42,7 @@ import {
   MatProgressSpinnerModule,
 } from '@angular/material';
 import { CardComponent } from './components/card/card.component';
+import { TruncatePipe } from './pipes/limit.pipe';
 
 const imports = [
   CommonModule,
@@ -78,6 +79,7 @@ const declarations = [
   TablesortColDirective,
   EnumPipe,
   YesNoPipe,
+  TruncatePipe
 ];
 
 @NgModule({

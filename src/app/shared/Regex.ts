@@ -11,4 +11,5 @@ export class Regex{
     static readonly  Password:string = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{8,}$";
     static readonly  SimpleEmail:string = "[^@ \\t\\r\\n]+@[^@ \\t\\r\\n]+\\.[^@ \\t\\r\\n]+";
     static readonly  LettersAndNumbers:string = "[a-zA-Z0-9]+";
+    static readonly ExpirationDate:string="^((0[1-9])|(1[0-2]))[/]*((2[8-9])|(2[0-5]))$";
 }

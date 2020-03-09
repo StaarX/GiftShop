@@ -1,8 +1,8 @@
 import { ProductDetail } from './productDetail-model';
 
 export interface CartItem {
-      cartid:string;
-      productDetailId:string;
+      cartID?:string;
+      userid:string;
       quantity:number;
       unitPrice:number;
       productDetail:ProductDetail;

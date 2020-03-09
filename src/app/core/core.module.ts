@@ -22,6 +22,7 @@ import { DownloadService } from './services/download.service';
 import { ConfigService } from './services/config.service';
 import { LoadingService } from './services/loading.service';
 import { AuthGuardAdmin } from './guards/auth.guard.admin';
+import { CartService } from './services/cart.service';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -76,6 +77,7 @@ const entryComponents: any[] = [
     DownloadService,
     ConfigService,
     LoadingService,
+    CartService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,

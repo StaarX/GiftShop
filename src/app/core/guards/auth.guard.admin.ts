@@ -27,6 +27,7 @@ export class AuthGuardAdmin implements CanActivate {
             if(!!isAdmin){
               return true;
             }else{
+            this._router.navigateByUrl('/');
               this._notificationService.error('You are not allowed to go to this route')
               return false;
             }

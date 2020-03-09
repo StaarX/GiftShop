@@ -8,9 +8,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ShopProductDetailedComponent } from './shop-product-detailed/shop-product-detailed.component';
 import { CartComponent } from './cart/cart.component';
+import { SummaryComponent } from './summary/summary.component';
 
 @NgModule({
-  declarations: [ShopListComponent,ShopProductDetailedComponent,CartComponent],
+  declarations: [ShopListComponent,ShopProductDetailedComponent,CartComponent,SummaryComponent],
   imports: [
     SharedModule,
     FormsModule,

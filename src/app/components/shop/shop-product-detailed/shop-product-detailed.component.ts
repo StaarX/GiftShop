@@ -12,6 +12,9 @@ import { elementEventFullName } from '@angular/compiler/src/view_compiler/view_c
 import { NotificationService } from 'src/app/core/services/notification.service';
 import { Category } from 'src/app/common/models/category-model';
 import { Router, ActivatedRoute } from '@angular/router';
+import { AuthModel } from 'src/app/common/models/auth.model';
+import { CartItem } from 'src/app/common/models/cartitem-model';
+import { CartService } from 'src/app/core/services/cart.service';
 
 @Component({
   selector: 'app-shop-product-detailed',
@@ -20,13 +23,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 })
 export class ShopProductDetailedComponent extends ComponentBase
   implements OnInit, OnDestroy {
-  private _paginatedRequest: PaginatedRequest = {};
-  page: PaginatedResult<Product>;
-  public categories:PaginatedResult<Category>;
-  selectedCategorytoSort;
-  pageSize = 9;
-  currentPage = 1;
-  //Modal vars
+  userInfo:AuthModel;
+  autenticated:boolean;
   public productId: string;
   public productInfo:Product={id:"",
                             name:"",
@@ -47,10 +45,10 @@ export class ShopProductDetailedComponent extends ComponentBase
     private _errorHandler: ErrorHandlerService,
     private modalService: NgbModal,
     private readonly _route: ActivatedRoute,
-    private readonly _router: Router
+    private readonly _router: Router,
+    private readonly _cartService:CartService
   ) {
     super();
-    this.getCategories();
   }
 
 
@@ -95,56 +93,77 @@ export class ShopProductDetailedComponent extends ComponentBase
   }
 
 //Modal functions
-  addCart() {
-      if (this.productInfo.productDetails.length>0&&this.selectedType!=undefined&&this.selectedQty!=undefined) {
-
-        if (this.foundSameItem) {
-         if (this.checkAvailabilityxQtyDesired()) {
-           localStorage.setItem("CartI:"+this.productInfo.name+":"+this.selectedType.type,JSON.stringify({
-                                                                      productId:this.productInfo.id,
-                                                                      name:this.productInfo.name,
-                                                                      description:this.productInfo.description,
-                                                                      imgSource:this.productInfo.imgSource,
-                                                                      qty:this.previousQty+this.selectedQty,
-                                                                      productDetail:{
-                                                                        id:this.selectedType.id,
-                                                                        type:this.selectedType.type,
-                                                                        price:this.selectedType.price,
-                                                                        availability:this.selectedType.availability
-                                                                      }                                                              
-             })); 
-             this.handleAddToCartSuccess('The item was successfully added to the cart');
-             return;
-           }else{
-               this.handleAddToCartFailure('The quantity desired is more than the available for the selected Type.');
-               return;
-             } 
-      
-         }
-
-      localStorage.setItem("CartI:"+this.productInfo.name+":"+this.selectedType.type,JSON.stringify({
-                                                                      productId:this.productInfo.id,
-                                                                      name:this.productInfo.name,
-                                                                      description:this.productInfo.description,
-                                                                      imgSource:this.productInfo.imgSource,
-                                                                      qty:this.selectedQty,
-                                                                      productDetail:{
-                                                                        id:this.selectedType.id,
-                                                                        type:this.selectedType.type,
-                                                                        price:this.selectedType.price,
-                                                                        availability:this.selectedType.availability
-                                                                      }                                                              
-      }));
-      this.handleAddToCartSuccess('The item was successfully added to the cart');
-      }
-   
-  }
-
-  private getCategories(){
-    this._paginatedRequest.page=1;
-    this.registerRequest(this._shopService.getPageCategories(this._paginatedRequest)).subscribe(response=>{
-    this.categories=response;
+addItToCart(cartitem:CartItem){
+  this._cartService.saveCartItem(cartitem).toPromise().then(res=>{
+    localStorage.clear();
   });
+}
+
+  addCart() {
+    if (this.productInfo.productDetails.length>0&&this.selectedType!=undefined&&this.selectedQty!=undefined) {
+      //DTO declaration
+    let cart:CartItem={
+      userid:'',
+      quantity:0,
+      unitPrice:this.selectedType.price,
+      productDetail:{
+        id:this.selectedType.id,
+        productId:this.productInfo.id,
+        type:this.selectedType.type,
+        price:this.selectedType.price,
+        availability:this.selectedType.availability,
+        product:{
+          id:this.productInfo.id,
+          name:this.productInfo.name,
+          description:this.productInfo.description,
+          imgSource:this.productInfo.imgSource
+        }
+      }
+};
+      if (this.foundSameItem) {
+       if (this.checkAvailabilityxQtyDesired()) {
+          if (this.autenticated) {
+            //Values that change
+              cart.userid=this.userInfo.id
+              cart.quantity=this.previousQty+this.selectedQty;
+           localStorage.setItem("CartI:"+this.selectedType.id,JSON.stringify(cart));
+           this.addItToCart(cart);
+           this.handleAddToCartSuccess('The item was successfully added to the cart');
+           return;
+          }else{
+            //Values that change
+            cart.userid='unregistered'
+            cart.quantity=this.previousQty+this.selectedQty;
+       localStorage.setItem("CartI:"+this.selectedType.id,JSON.stringify(cart)); 
+       this.handleAddToCartSuccess('The item was successfully added to the cart');
+       return;
+          }
+         }else{
+             this.handleAddToCartFailure('The quantity desired is more than the available for the selected Type.');
+             return;
+           } 
+    
+       }
+       //If same item was not found
+           if (this.autenticated) {
+             //Values that cahnge
+            cart.userid=this.userInfo.id
+            cart.quantity=this.selectedQty; 
+            localStorage.setItem("CartI:"+this.selectedType.id,JSON.stringify(cart)); 
+            this.handleAddToCartSuccess('The item was successfully added to the cart');
+            return;
+           }else{
+             //Values that change
+             cart.userid='unregistered'
+             cart.quantity=this.previousQty+this.selectedQty;
+        localStorage.setItem("CartI:"+this.selectedType.id,JSON.stringify(cart)); 
+        this.handleAddToCartSuccess('The item was successfully added to the cart');
+        return;
+           }
+          }else{
+              this.handleAddToCartFailure('The quantity desired is more than the available for the selected Type.');
+              return;
+            } 
   }
 
   foundSameItem(){
