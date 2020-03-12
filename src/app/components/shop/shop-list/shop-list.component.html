@@ -1,4 +1,4 @@
-<div class="mt-3 pageCard">
+<div class="pageCard">
   <h2 class="text-center lightFont">Gift Shop</h2> 
 
 <app-panel [loading]="loading">
@@ -129,13 +129,15 @@
   <div class="row mx-1 justify-content-center">
     <div class="col-lg-3 col-md-4 col-sm-6 center card-deck" *ngFor="let item of page?.items">
         <div class="card bg-light p-1 m-1">
+          <div class="card-header text-center">
+            <h4 title="{{item.name}}"> {{ item.name | limitTo:25}}</h4>
+          </div>
             <div class="fixImage">
               <img [src]="item.imgSource" class="img-thumbnail"  [alt]="item.name"/>
             </div>
             <div class="card-body">
             <ul class="card-text">
-                <li><strong>Name:</strong> {{ item.name | limitTo:40}}</li>
-                <li><strong>Description:</strong> {{ item.description }}</li>
+                <li title="{{item.description}}"><strong>Description:</strong> {{ item.description | limitTo:50}}</li>
             </ul>
           </div>
             <div class="card-footer justify-content-center">

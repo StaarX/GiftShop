@@ -38,7 +38,7 @@ export class ShopListComponent extends ComponentBase
   public cart:Cart;
   public selectedType:any;
   public selectedQty:number;
-  public previousQty:number=0;
+  public previousQty={number:0};
   
 
   constructor(private readonly _notificationService: NotificationService,
@@ -83,31 +83,12 @@ export class ShopListComponent extends ComponentBase
     }
     this.getThePage();
   }
-
-  delete(product: Product) {
-    this._messageBox
-      .confirm(
-        { key: 'products.CONFIRM_DELETE', arg: { name: product.name } },
-        'products.DELETE'
-      )
-      .subscribe((result: boolean) => {
-        if (result) {
-          this._shopService.delete(product.id).subscribe(
-            () => {
-              this.getPage(1);
-            },
-            error => this._errorHandler.handle(error)
-          );
-        }
-      });
-  }
   //ngFor functions
   availabilityToArray(){
   if (this.selectedType!=undefined) {
     return Array(this.selectedType.availability);
   }
   }
-
  // Required boolean NgIf's functions
   hasProductDetails(){
     if(this.modalInfo!=undefined){
@@ -123,28 +104,17 @@ export class ShopListComponent extends ComponentBase
     }
     return false;
   }
-
 //Modal functions
-private get(productId: string) {
-this.registerRequest(this._shopService.get(productId)).toPromise().then(queryResult=>{
-  this.modalInfo=queryResult;
-}).catch(errorResponse => this._errorHandler.handle(errorResponse));
-}
-
 private getToPromise(productId: string) {
   return this.registerRequest(this._shopService.get(productId)).toPromise();
-}
-
-  addToCart(cartitem:CartItem){
-    this._cartService.saveCartItem(cartitem).toPromise().then(res=>{
-      localStorage.clear();
-    });
   }
 
   openModal(content,id:string) {
       this.getToPromise(id).then(queryResult=>{
         this.modalInfo=queryResult;
-        this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title',centered:true}).result.then((result) => {
+        const {id,name,description,imgSource}=this.modalInfo;
+
+        this.modalService.open(content, {windowClass:'modal-container',ariaLabelledBy: 'modal-basic-title',centered:true}).result.then((result) => {
           if (this.modalInfo.productDetails.length>0&&this.selectedType!=undefined&&this.selectedQty!=undefined) {
             //DTO declaration
           let cart:CartItem={
@@ -153,68 +123,60 @@ private getToPromise(productId: string) {
             unitPrice:this.selectedType.price,
             productDetail:{
               id:this.selectedType.id,
-              productId:this.modalInfo.id,
+              productId:id,
               type:this.selectedType.type,
               price:this.selectedType.price,
               availability:this.selectedType.availability,
               product:{
-                id:this.modalInfo.id,
-                name:this.modalInfo.name,
-                description:this.modalInfo.description,
-                imgSource:this.modalInfo.imgSource
+                id,
+                name,
+                description,
+                imgSource
               }
             }
       };
-            if (this.foundSameItem) {
-             if (this.checkAvailabilityxQtyDesired()) {
-                if (this.autenticated) {
-                  //Values that change
-                    cart.userid=this.userInfo.id
-                    cart.quantity=this.previousQty+this.selectedQty;
-                 localStorage.setItem("CartI:"+this.selectedType.id,JSON.stringify(cart));
-                 this.addToCart(cart);
-                 this.handleAddToCartSuccess('The item was successfully added to the cart');
-                 return;
-                }else{
+      //Save logic start
+      if (this.autenticated) {
+        //Values that change
+          cart.userid=this.userInfo.id
+          cart.quantity=this.previousQty.number+this.selectedQty;
+            this._cartService.addItemToDBCart(cart).then(res=>{
+              if(res){
+                this.handleAddToCartSuccess('The item was successfully added to the cart');
+              }else{
+                this.handleAddToCartFailure('There was an error while adding your item to the database');
+              }
+            });
+        return;
+      }
+            //Case User is not logged
+             if (this._cartService.checkAvailabilityxQtyDesired(cart.productDetail.id, this.selectedType.availability,this.selectedQty,this.previousQty)) {
                   //Values that change
                   cart.userid='unregistered'
-                  cart.quantity=this.previousQty+this.selectedQty;
-             localStorage.setItem("CartI:"+this.selectedType.id,JSON.stringify(cart)); 
-             this.handleAddToCartSuccess('The item was successfully added to the cart');
-             return;
-                }
-               }else{
-                   this.handleAddToCartFailure('The quantity desired is more than the available for the selected Type.');
-                   return;
-                 } 
-          
-             }
-             //If same item was not found
-                 if (this.autenticated) {
-                   //Values that cahnge
-                  cart.userid=this.userInfo.id
-                  cart.quantity=this.selectedQty; 
-                  localStorage.setItem("CartI:"+this.selectedType.id,JSON.stringify(cart)); 
+                  //We proceed to check if there is the same item in the cart
+                  if (this._cartService.foundSameItem(cart.productDetail.id)){
+                  cart.quantity=this.previousQty.number+this.selectedQty;
+                  }else{
+                    cart.quantity=this.selectedQty;
+                  }
+                  this._cartService.addItemToLocalStorageCart("CartI:"+this.selectedType.id,JSON.stringify(cart));
                   this.handleAddToCartSuccess('The item was successfully added to the cart');
                   return;
-                 }else{
-                   //Values that change
-                   cart.userid='unregistered'
-                   cart.quantity=this.previousQty+this.selectedQty;
-              localStorage.setItem("CartI:"+this.selectedType.id,JSON.stringify(cart)); 
-              this.handleAddToCartSuccess('The item was successfully added to the cart');
-              return;
-                 }
+               }else{
+                cart.quantity=cart.productDetail.availability;
+                this._cartService.addItemToLocalStorageCart("CartI:"+this.selectedType.id,JSON.stringify(cart));
+                this.handleAddToCartSuccess('The item was successfully added to the cart');
+                   return;
+                 }  
                 }else{
-                    this.handleAddToCartFailure('The quantity desired is more than the available for the selected Type.');
-                    return;
-                  } 
+                  this.handleAddToCartFailure('You cannot do that');
+                  return;
+                } 
         }, (reason) => {
           //When dismissed set everything back to default
           this.modalBackToDefault();
         });
-
-      }).catch(errorResponse => this._errorHandler.handle(errorResponse));
+      }).catch(err=>this.handleAddToCartFailure(err));
     
   }
 
@@ -236,40 +198,7 @@ private getToPromise(productId: string) {
                             };
       this.selectedType=undefined;
       this.selectedQty=undefined;
-      this.previousQty=0;
-  }
-
-  foundSameItem(){
-    if(localStorage.length>0){
-      for (let index = 0; index < localStorage.length; index++) {
-      let key= localStorage.key(index);
-      let value= localStorage.getItem(key);
-      
-      if (key.includes("CartI:"+this.selectedType.id)&&value.trim()!='') {
-       return true;
-      }
-     }
-    }
-    return false;
-  }
-
-  checkAvailabilityxQtyDesired(){
-    if(localStorage.length>0){
-      for (let index = 0; index < localStorage.length; index++) {
-      let key= localStorage.key(index);
-      let value= localStorage.getItem(key);
-      
-      if (key.includes("CartI:"+this.selectedType.id)&&value.trim()!='') {
-       let parsedValue=JSON.parse(value);
-       if (this.selectedType.availability<(parsedValue.quantity+this.selectedQty)) {
-         return false;
-       }
-       this.previousQty=parsedValue.quantity;
-       return true;
-      }
-     }
-    }
-    return true;
+      this.previousQty.number=0;
   }
 
   disabledSaveButton(){
@@ -331,7 +260,6 @@ this.modalBackToDefault();
     this.getThePage();
   }
 
-
   getThePage(){
     this.registerRequest(
       this._shopService.getPage(this._paginatedRequest)
@@ -362,7 +290,6 @@ this.modalBackToDefault();
     });
   }
 
-  
   filterbyCategory(){
           this._paginatedRequest.pageSize=this.pageSize;
           this.registerRequest(

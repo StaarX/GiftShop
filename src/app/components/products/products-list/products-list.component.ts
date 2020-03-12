@@ -45,15 +45,15 @@ export class ProductsListComponent extends ComponentBase
     this.getPage(this._paginatedRequest.page);
   }
 
-  delete(example: Product) {
+  delete(product: Product) {
     this._messageBox
       .confirm(
-        { key: 'products.CONFIRM_DELETE', arg: { name: example.name } },
+        { key: 'products.CONFIRM_DELETE', arg: { name: product.name } },
         'products.DELETE'
       )
       .subscribe((result: boolean) => {
         if (result) {
-          this._productsService.delete(example.id).subscribe(
+          this._productsService.delete(product.id).subscribe(
             () => {
               this.getPage(1);
             },

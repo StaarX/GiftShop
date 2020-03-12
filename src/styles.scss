@@ -18,6 +18,7 @@
 @import '../node_modules/bootstrap/scss/custom-forms';
 @import '../node_modules/bootstrap/scss/nav';
 @import '../node_modules/bootstrap/scss/navbar';
+@import '@angular/material/prebuilt-themes/deeppurple-amber.css';
 @import '../node_modules/bootstrap/scss/card';
 // @import '../node_modules/bootstrap/scss/breadcrumb';
 @import '../node_modules/bootstrap/scss/pagination';
@@ -45,3 +46,50 @@
 @import './styles/tablesort';
 @import './styles/img';
 @import './styles/buttons';
+ 
+//Styles for components
+.modal-container{
+    animation-name: appear;
+    animation-duration: 0.2s;
+  }
+  
+  @keyframes appear {
+    0%   {transform: scale(0.5)}
+    100% {transform: scale(1)}
+  }
+#dropdown-brand{
+    animation-name: appear;
+    animation-duration: 0.2s;
+  
+//display: block !important;
+   // max-height: 1px !important;
+  //  visibility: hidden;
+  //  -moz-transition: all 0.6s ease-in-out;
+  //  -o-transition: all 0.6s ease-in-out;
+   // -webkit-transition: all 0.6s ease-in-out;
+   // -ms-transition: all 0.6s ease-in-out;
+   // transition: all 0.6s ease-in-out;
+}
+#dropdown-brand.show{
+    visibility: visible;
+    max-height: 230px !important;
+}
+
+#dropdown-list{
+    display: block !important;
+    max-height: 1px !important;
+    -moz-transition: all 0.6s ease-in-out;
+    -o-transition: all 0.6s ease-in-out;
+    -webkit-transition: all 0.6s ease-in-out;
+    -ms-transition: all 0.6s ease-in-out;
+    transition: all 0.6s ease-in-out;
+}
+#dropdown-list.show{
+    max-height: 230px !important;
+}
+.pageCard{
+    margin-top: 1rem !important;
+    border-radius: 0.25rem !important;
+    background-color: rgba(0, 0, 0, 0.62);
+  }
+  

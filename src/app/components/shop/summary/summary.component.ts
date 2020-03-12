@@ -25,7 +25,7 @@ export class SummaryComponent implements OnInit{
   disabledCheckout=false;
 
 
-  constructor(private _authService: AuthService,private readonly _router: Router, private _mainService:CartService,
+  constructor(private _authService: AuthService,private readonly _router: Router, private _cartService:CartService,
     private readonly _route: ActivatedRoute,
     public fb: FormBuilder,
     private _messageBox: MessageBoxService,private readonly _notificationService: NotificationService) { 
@@ -45,55 +45,45 @@ export class SummaryComponent implements OnInit{
       if (res) {
         this._authService.getAuthInfo().toPromise().then(res=>{
           this.userInfo=res;
+        this.loadCart();
+        return;
         });
-      }
+      }else{
       this.loadCart();
+      }
     });
 
   }
-
 
   //Summary functions
   goBack(){
     this._router.navigateByUrl("/")
   }
   loadCart(){
-    this.cartItems=[];
-    var aux:CartItem[]=[];
-    if(localStorage.length>0){
-      for (let index = 0; index < localStorage.length; index++) {
-      let key= localStorage.key(index);
-      let value= localStorage.getItem(key);
-      
-      if (key.includes("CartI:")&&value.trim()!='') {
-        let parsedValue=JSON.parse(value);
-        parsedValue.key=key;
-        aux.push(parsedValue);
-      }
-     }
-    }
-            
-    //Case user is logged 
+    var localStorageCartItems=this._cartService.getLocalStorageItems();
+
     if (this.Logged) {
-      this._mainService.getCartByUser(this.userInfo.id).subscribe(res=>{
-      //If there is not a item in the local storage then the dbcart is assigned
-        if(aux.length<1){
+      //Case there are not items in the localstorage and i'm logged
+      if (localStorageCartItems.length<1) {
+        this._cartService.getCartByUserId(this.userInfo.id).then(res=>{
+          return this.cartItems=res.cartItems;
+        });
+        return;
+      }else{  
+      //Case items in local storage and db items need to merge
+    let cart:Cart={
+      userId:this.userInfo.id,
+      cartItems:localStorageCartItems
+    }
+        this._cartService.getMergedCart(cart).then(res=>{
           this.cartItems=res.cartItems;
           return;
-        }
-        let cart:Cart={
-          userId:this.userInfo.id,
-          cartItems:aux
-        }
-
-        this._mainService.updateCart(cart,this.userInfo.id).toPromise().then(res=>{
-          this.cartItems=res.cartItems;
-          localStorage.clear();
         });
-
-      });
+        return;
+      }
     }else{
-      this.cartItems=aux;
+      //Case the user isn't logged so only show the items in localstorage
+      this.cartItems=localStorageCartItems;
     }
   }
 
@@ -125,7 +115,7 @@ export class SummaryComponent implements OnInit{
             cartItems:this.cartItems
           }
 
-          this._mainService.buyTheCart(cart).toPromise().then(res=>{
+          this._cartService.buyTheCart(cart).toPromise().then(res=>{
             console.log('Res from database');
             console.log(res);
             if (res.itemsThatApplied.length > 0) {

@@ -1,7 +1,7 @@
 <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow navbar-expand-md">
-  <li class="navbar-brand fixAppName col-sm-3 col-md-2 mr-0 text-center" ngbDropdown display="dynamic">
+  <li class="navbar-brand fixAppName col-12 col-md-2 mr-0 text-center" autoClose="true" ngbDropdown display="dynamic" placement="bottom-right">
     <a ngbDropdownToggle class="pointable" role="button"><i class="fas fa-gift"></i> {{ 'app.NAME' | translate }}</a>
-    <div ngbDropdownMenu>
+    <div ngbDropdownMenu class="dropdown-menu" role="menu">
       <div *ngFor="let item of publicItems">
        <a ngbDropdownItem class="nav-link" [routerLink]="item.route">{{item.name | translate}}</a>
       </div>
@@ -14,12 +14,12 @@
     </div>
   </li>
 
-    <app-title class="navbar-text ml-auto"></app-title>
+  <app-title class="navbar-text ml-auto"></app-title>
     
   <!-- <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search"> -->
   <ul class="navbar-nav px-3 ml-auto">
     <!--Start of the dropdown-->
-    <li *ngIf="evaluateCartHiddenStatus()" class="nav-item d-md-block d-none fixNavItem" ngbDropdown (openChange)="loadCart()"  #myDrop="ngbDropdown">
+    <li *ngIf="evaluateCartHiddenStatus()" class="nav-item d-md-block d-none fixNavItem" ngbDropdown (openChange)="loadCart($event)" #myDrop="ngbDropdown" id="dropdown-list">
 
       <a class="nav-link pointable"ngbDropdownToggle id="navbarDropdown1" role="button">
         <i class="fas fa-shopping-cart"></i>
@@ -33,14 +33,14 @@
         <hr>
         <app-panel [loading]="loading"> 
         <div class="container">
-        <div *ngFor="let item of cartItems; let ii = index">
+        <div class="mx-2" *ngFor="let item of cartItems; let ii = index">
           <div class="row">
           <div class="col-3 card">
             <img [src]="item.productDetail.product.imgSource">
             </div> 
            <div class="col-7 card">
-            <div>Name: {{item.productDetail.product.name | limitTo:20}} </div>
-            <div>Type: {{item.productDetail.type | limitTo:20}}</div>
+            <div title="{{item.productDetail.product.name}}">Name: {{item.productDetail.product.name | limitTo:20}} </div>
+            <div title="{{item.productDetail.type}}">Type: {{item.productDetail.type | limitTo:20}}</div>
             <div class="input-group">
               <div>
               Quantity: 
@@ -69,7 +69,7 @@
         <hr>
         <div class="row card">
       <div class="btn-group" role="group">
-        <button class="btn btn-success" [disabled]="disabledCheckout" (click)="checkout() && $event.stopPropagation(); myDrop.close();">Check out</button>
+        <button class="btn btn-success" [disabled]="disabledCheckout" (click)="checkout() && $event.stopPropagation(); myDrop.close();"><i class="fas fa-money-check-alt"></i> Check out</button>
       </div>
     </div>
       </div>

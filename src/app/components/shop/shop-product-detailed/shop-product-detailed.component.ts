@@ -36,7 +36,7 @@ export class ShopProductDetailedComponent extends ComponentBase
                             };
   public selectedType:any;
   public selectedQty:number;
-  public previousQty:number=0;
+  public previousQty={number:0};
   
 
   constructor(private readonly _notificationService: NotificationService,
@@ -58,7 +58,7 @@ export class ShopProductDetailedComponent extends ComponentBase
   }
 
   goBack(){
-    this._router.navigateByUrl("/shop")
+    this._router.navigateByUrl("/")
   }
 
   //ngFor functions
@@ -92,13 +92,8 @@ export class ShopProductDetailedComponent extends ComponentBase
   }
 
 //Modal functions
-addItToCart(cartitem:CartItem){
-  this._cartService.saveCartItem(cartitem).toPromise().then(res=>{
-    localStorage.clear();
-  });
-}
-
   addCart() {
+    const {id,name,description,imgSource}=this.productInfo;
     if (this.productInfo.productDetails.length>0&&this.selectedType!=undefined&&this.selectedQty!=undefined) {
       //DTO declaration
     let cart:CartItem={
@@ -107,97 +102,56 @@ addItToCart(cartitem:CartItem){
       unitPrice:this.selectedType.price,
       productDetail:{
         id:this.selectedType.id,
-        productId:this.productInfo.id,
+        productId:id,
         type:this.selectedType.type,
         price:this.selectedType.price,
         availability:this.selectedType.availability,
         product:{
-          id:this.productInfo.id,
-          name:this.productInfo.name,
-          description:this.productInfo.description,
-          imgSource:this.productInfo.imgSource
+          id,
+          name,
+          description,
+          imgSource
         }
       }
 };
-      if (this.foundSameItem) {
-       if (this.checkAvailabilityxQtyDesired()) {
-          if (this.autenticated) {
-            //Values that change
-              cart.userid=this.userInfo.id
-              cart.quantity=this.previousQty+this.selectedQty;
-           localStorage.setItem("CartI:"+this.selectedType.id,JSON.stringify(cart));
-           this.addItToCart(cart);
-           this.handleAddToCartSuccess('The item was successfully added to the cart');
-           return;
-          }else{
+//Save logic start
+if (this.autenticated) {
+  //Values that change
+    cart.userid=this.userInfo.id
+    cart.quantity=this.previousQty.number+this.selectedQty;
+      this._cartService.addItemToDBCart(cart).then(res=>{
+        if(res){
+          this.handleAddToCartSuccess('The item was successfully added to the cart');
+        }else{
+          this.handleAddToCartFailure('There was an error while adding your item to the database');
+        }
+      });
+  return;
+}
+      //Case User is not logged
+       if (this._cartService.checkAvailabilityxQtyDesired(cart.productDetail.id, this.selectedType.availability,this.selectedQty,this.previousQty)) {
             //Values that change
             cart.userid='unregistered'
-            cart.quantity=this.previousQty+this.selectedQty;
-       localStorage.setItem("CartI:"+this.selectedType.id,JSON.stringify(cart)); 
-       this.handleAddToCartSuccess('The item was successfully added to the cart');
-       return;
-          }
-         }else{
-             this.handleAddToCartFailure('The quantity desired is more than the available for the selected Type.');
-             return;
-           } 
-    
-       }
-       //If same item was not found
-           if (this.autenticated) {
-             //Values that cahnge
-            cart.userid=this.userInfo.id
-            cart.quantity=this.selectedQty; 
-            localStorage.setItem("CartI:"+this.selectedType.id,JSON.stringify(cart)); 
+            //We proceed to check if there is the same item in the cart
+            if (this._cartService.foundSameItem(cart.productDetail.id)){
+            cart.quantity=this.previousQty.number+this.selectedQty;
+            }else{
+              cart.quantity=this.selectedQty;
+            }
+            this._cartService.addItemToLocalStorageCart("CartI:"+this.selectedType.id,JSON.stringify(cart));
             this.handleAddToCartSuccess('The item was successfully added to the cart');
             return;
-           }else{
-             //Values that change
-             cart.userid='unregistered'
-             cart.quantity=this.previousQty+this.selectedQty;
-        localStorage.setItem("CartI:"+this.selectedType.id,JSON.stringify(cart)); 
-        this.handleAddToCartSuccess('The item was successfully added to the cart');
-        return;
-           }
+         }else{
+          cart.quantity=cart.productDetail.availability;
+          this._cartService.addItemToLocalStorageCart("CartI:"+this.selectedType.id,JSON.stringify(cart));
+          this.handleAddToCartSuccess('The item was successfully added to the cart');
+             return;
+           }  
           }else{
-              this.handleAddToCartFailure('The quantity desired is more than the available for the selected Type.');
-              return;
-            } 
+            this.handleAddToCartFailure('You cannot do that');
+            return;
+          } 
   }
-
-  foundSameItem(){
-    if(localStorage.length>0){
-      for (let index = 0; index < localStorage.length; index++) {
-      let key= localStorage.key(index);
-      let value= localStorage.getItem(key);
-      
-      if (key.includes("CartI:"+this.productInfo.name+":"+this.selectedType.type)&&value.trim()!='') {
-       return true;
-      }
-     }
-    }
-    return false;
-  }
-
-  checkAvailabilityxQtyDesired(){
-    if(localStorage.length>0){
-      for (let index = 0; index < localStorage.length; index++) {
-      let key= localStorage.key(index);
-      let value= localStorage.getItem(key);
-      
-      if (key.includes("CartI:"+this.productInfo.name+":"+this.selectedType.type)&&value.trim()!='') {
-       let parsedValue=JSON.parse(value);
-       if (this.selectedType.availability<(parsedValue.qty+this.selectedQty)) {
-         return false;
-       }
-       this.previousQty=parsedValue.qty;
-       return true;
-      }
-     }
-    }
-    return true;
-  }
-
   handleAddToCartSuccess(msg:string){
     this._notificationService.success(msg);
   this.goBack();
@@ -206,7 +160,7 @@ addItToCart(cartitem:CartItem){
   handleAddToCartFailure(msg:string){
     this._notificationService.error(msg);
     //Values back to default
-      this.previousQty=0;
+      this.previousQty.number=0;
   }
 
   typeChanged(){

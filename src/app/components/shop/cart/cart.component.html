@@ -13,8 +13,8 @@
             
             <div class="col-md-6 my-auto">
 
-            <div><strong>Name: </strong>{{item.productDetail.product.name}} </div>
-            <div><strong>Type: </strong>{{item.productDetail.type}}</div>
+            <div title="{{item.productDetail.product.name}}"><strong>Name: </strong>{{item.productDetail.product.name}} </div>
+            <div title="{{item.productDetail.type}}"><strong>Type: </strong>{{item.productDetail.type}}</div>
             <div>
               <div>
               <strong>Quantity:</strong> 
@@ -38,7 +38,7 @@
           
             
             </div>
-            <button class="btn col-2 text-center btn-danger" (click)="deleteItemFromCart(item)">
+            <button class="btn col-2 text-center btn-danger" (click)="deleteItemFromCart(item,ii)">
               <i class="fas fa-trash"></i>
             </button>
           </div>
@@ -51,8 +51,8 @@
         <hr>
         <div class="row card">
       <div class="btn-group" role="group">
-        <button class="btn btn-warning" (click)="goBack()">Go to the shop</button>
-        <button class="btn btn-success" (click)="checkout()">Check out</button>
+        <button class="btn btn-warning" (click)="goBack()"><i class="fas fa-shopping-basket"></i>Back to the shop</button>
+        <button class="btn btn-success" (click)="checkout()"><i class="fas fa-money-check-alt"></i> Check out</button>
       </div>
     </div>
       </div>

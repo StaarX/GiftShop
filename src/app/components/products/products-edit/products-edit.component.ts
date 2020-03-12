@@ -29,7 +29,6 @@ export class ProductsEditComponent extends ComponentBase implements OnInit {
   public tried=false;
   private _paginatedRequest: PaginatedRequest = {};
   public categories:PaginatedResult<Category>;
-  filter = new FormControl('');
   selectedCategory:any;
   selectedDetail:any;
   imageUrl: string = "https://pp2.walk.sc/_/s/_i/images/placeholder-225.jpg";
@@ -78,7 +77,7 @@ export class ProductsEditComponent extends ComponentBase implements OnInit {
       imgSource: ['', [Validators.required,Validators.maxLength(1500000)],]
     });
   }
-
+//Table method that paginate categories
   get getCats(): Category[] {
     this.tableSize=this.product.categories.length;
     return this.product.categories
@@ -167,7 +166,7 @@ export class ProductsEditComponent extends ComponentBase implements OnInit {
     });
   }
 
-  private async getCategories(){
+  private getCategories(){
     this._paginatedRequest.page=1;
     this.registerRequest(this._productsService.getPageCategories(this._paginatedRequest)).subscribe(response=>{
     this.categories=response;
@@ -203,20 +202,24 @@ export class ProductsEditComponent extends ComponentBase implements OnInit {
         status:0
       }
       this.product.categories.push(aux);
+      this._notificationService.success("Category added!");
       }else{
-        alert("You already have this category!");
+        this._notificationService.error("You already have this category!");
         return;
       }
     }else{
-      alert("You haven't selected any category!");
+      this._notificationService.error("You haven't selected any category!");
     }
   }
   public deleteCategory(id:string){
     for (let index = 0; index < this.product.categories.length; index++) {
       if (this.product.categories[index].id==id) {
         this.product.categories.splice(index--,1);
+        this._notificationService.success("Category removed");
+        return;
       }
     }
+    this._notificationService.error("Something strange happened");
   }
   public convertImage(imageInput: any) {
     if (imageInput.target.files && imageInput.target.files[0]) {
@@ -239,7 +242,7 @@ export class ProductsEditComponent extends ComponentBase implements OnInit {
 
   //Product details modal
   openModal(content,id:string) {
-    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title',centered:true}).result.then((result) => {
+    this.modalService.open(content, {windowClass:"modal-container",ariaLabelledBy: 'modal-basic-title',centered:true}).result.then((result) => {
       
     }, (reason) => {
       //When dismissed set everything back to default

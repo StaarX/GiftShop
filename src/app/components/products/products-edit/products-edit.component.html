@@ -1,10 +1,9 @@
-<div class="py-md-3 align-content-center mt-3 pageCard">
+<div class="py-3 align-content-center my-3 pageCard">
   <app-panel class="mx-2" [loading]="loading">
     <h2 class="text-center lightFont" *ngIf="this.addMode">Add a new Product</h2>
     <h2 class="text-center lightFont" *ngIf="this.editMode">Edit a existing Product</h2>
-    <br/>   
    
-    <form class=""(ngSubmit)="doSubmit()" [formGroup]="form" autocomplete="off">
+    <form class="my-3"(ngSubmit)="doSubmit()" [formGroup]="form" autocomplete="off">
       <div class="row">
         <div class="col-md">
           <div class="row form-group">
@@ -21,7 +20,7 @@
                 formControlName="name"
               />
               <div *ngIf="editMode" class="input-group-append">
-                <button type="button" class="btn btn-outline-success" (click)="openModal(content)">{{ 'productDetails.BUTTON' | translate }}</button>
+                <button type="button" class="btn btn-secondary" (click)="openModal(content)"><i class="fas fas fa-file-signature"></i> {{ 'productDetails.BUTTON' | translate }}</button>
               </div>
               </div>
               
@@ -197,24 +196,24 @@
             <tr *ngFor="let category of getCats; index as i">
               <th class="text-center lightFont" scope="row">{{ i + 1 }}</th>
               <td class="text-center lightFont">
-                <ngb-highlight [result]="category.name" [term]="filter.value"></ngb-highlight>
+                {{category.name}}
               </td>
-              <td class="text-center lightFont"><ngb-highlight [result]="category.description" [term]="filter.value"></ngb-highlight></td>
-              <td class="text-center lightFont"><button type="button" (click)="deleteCategory(category.id)" class="btn btn-danger">Delete</button></td>
+              <td class="text-center lightFont">{{category.description}}</td>
+              <td class="text-center lightFont"><button type="button" (click)="deleteCategory(category.id)" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Delete</button></td>
             </tr>
             </tbody>
           </table>
           <div class="row align-items-center">
-            <div class="col-6">
-            <ngb-pagination [collectionSize]="tableSize" [(page)]="page" [pageSize]="pageSize">
+
+            <div class="col-md-6 col-12 justify-content-center d-flex my-auto">
+            <ngb-pagination class="justify-content-center" [collectionSize]="tableSize" [(page)]="page" [pageSize]="pageSize">
             </ngb-pagination>
           </div>
 
-        <div class="col-6 form-actions">
-          <button type="submit" class="btn btn-primary">
-            {{ 'app.SAVE' | translate }}
+        <div class="col-md-6 col-12 form-actions justify-content-center d-flex mt-1 mt-sm-0 mt-md-0 mt-lg-0 mb-md-3">
+          <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> {{ 'app.SAVE' | translate }}
           </button>
-          <a [routerLink]="['/products']" class="btn btn-danger">{{
+          <a [routerLink]="['/products']" class="btn btn-danger"><i class="far fa-window-close"></i> {{
             'app.CANCEL' | translate
           }}</a>
         </div>
