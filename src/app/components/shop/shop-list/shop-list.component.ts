@@ -17,6 +17,7 @@ import { AuthModel } from 'src/app/common/models/auth.model';
 import { stringify } from 'querystring';
 import { CartItem } from 'src/app/common/models/cartitem-model';
 import { CartService } from 'src/app/core/services/cart.service';
+import { MainComponent } from 'src/app/main/main.component';
 
 @Component({
   selector: 'app-example-list',
@@ -47,7 +48,8 @@ export class ShopListComponent extends ComponentBase
     private _errorHandler: ErrorHandlerService,
     private modalService: NgbModal,
     private _authService:AuthService,
-    private _cartService:CartService
+    private _cartService:CartService,
+    private _mainComponent:MainComponent
   ) {
     super();
     this.getCategories();
@@ -65,6 +67,7 @@ export class ShopListComponent extends ComponentBase
       }
 
     });
+    this._mainComponent.loadCart(true);
   }
 
   getPage(page: number) {
@@ -210,6 +213,7 @@ private getToPromise(productId: string) {
 
   handleAddToCartSuccess(msg:string){
     this._notificationService.success(msg);
+    this._mainComponent.loadCart(true);
 //Values back to default
 this.modalBackToDefault();
   }

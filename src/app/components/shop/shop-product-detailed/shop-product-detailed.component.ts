@@ -46,7 +46,7 @@ export class ShopProductDetailedComponent extends ComponentBase
     private modalService: NgbModal,
     private readonly _route: ActivatedRoute,
     private readonly _router: Router,
-    private readonly _cartService:CartService
+    private readonly _cartService:CartService,
   ) {
     super();
   }

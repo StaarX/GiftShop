@@ -57,9 +57,11 @@ export class MainComponent implements OnInit{
         this._authService.getAuthInfo().toPromise().then(res=>{
           this.userInfo=res;
           this.role=res.roles[0];
+          this.loadCart(true);
         });
+      }else{
+        this.loadCart(true);
       }
-
     });
   }
 
@@ -137,6 +139,7 @@ export class MainComponent implements OnInit{
           }else{
             //Not logged case
             this._cartService.deleteLocalStorage(thing.key);
+            this.loadCart(true);
           }
         }
       });

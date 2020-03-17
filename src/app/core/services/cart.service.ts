@@ -6,6 +6,7 @@ import { API_URL } from 'src/app/core/api-url.token';
 import { ASSETS_URL } from 'src/app/core/assets-url.token';
 import { Product } from 'src/app/common/models/products.model';
 import { Cart } from 'src/app/common/models/cart-model';
+import { MainComponent } from 'src/app/main/main.component';
 
 @Injectable()
 export class CartService {
